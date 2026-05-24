@@ -2,33 +2,33 @@ const User = require('../models/User');
 
 const PLAN_LIMITS = {
   free: {
-    connections: Infinity,
-    messages: Infinity,
-    posts: Infinity,
-    startups: Infinity,
-    investments: Infinity,
-    ai_analysis: Infinity,
-    ai_advisor: Infinity,
-    ai_match: true
+    connections: 5,
+    messages: 0,
+    posts: 2,
+    startups: 1,
+    investments: 1,
+    ai_analysis: 0,
+    ai_advisor: 0,
+    ai_match: false
   },
   plus: {
-    connections: Infinity,
-    messages: Infinity,
-    posts: Infinity,
-    startups: Infinity,
-    investments: Infinity,
-    ai_analysis: Infinity,
-    ai_advisor: Infinity,
-    ai_match: true
+    connections: 10,
+    messages: 10,
+    posts: 5,
+    startups: 2,
+    investments: 2,
+    ai_analysis: 5,
+    ai_advisor: 0,
+    ai_match: false
   },
   pro: {
-    connections: Infinity,
-    messages: Infinity,
-    posts: Infinity,
-    startups: Infinity,
-    investments: Infinity,
-    ai_analysis: Infinity,
-    ai_advisor: Infinity,
+    connections: 20,
+    messages: 50,
+    posts: 10,
+    startups: 5,
+    investments: 5,
+    ai_analysis: 10,
+    ai_advisor: 10,
     ai_match: true
   },
   premium: {
@@ -45,10 +45,6 @@ const PLAN_LIMITS = {
 
 const checkLimit = (type) => {
   return async (req, res, next) => {
-    // --- LIMITS TEMPORARILY DISABLED (Open to all users) ---
-    return next();
-    
-    /* Original Limit Logic:
     try {
       const user = await User.findById(req.user._id);
       const plan = user.subscriptionPlan || 'free';
@@ -144,7 +140,6 @@ const checkLimit = (type) => {
     } catch (err) {
       next(err);
     }
-    */
   };
 };
 

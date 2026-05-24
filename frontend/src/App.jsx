@@ -68,13 +68,20 @@ const AdminRoute = ({ children }) => {
 };
 
 function App() {
-  const { user, token } = useAuthStore();
+  const { user, token, fetchMe } = useAuthStore();
   const { initTheme } = useThemeStore();
   const { addNotification } = useNotificationStore();
 
   // Initialize theme
   useEffect(() => {
     initTheme();
+  }, []);
+
+  // Sync user state with backend on mount
+  useEffect(() => {
+    if (token) {
+      fetchMe();
+    }
   }, []);
 
   // Connect socket when authenticated

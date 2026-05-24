@@ -109,7 +109,7 @@ const AIAnalysis = () => {
 
   const rcfg = selectedAnalysis ? RECOMMENDATION_CONFIG[selectedAnalysis.recommendation] : null;
 
-  if (false) { // (user?.subscriptionPlan === 'free') {
+  if (!user?.subscriptionPlan || user?.subscriptionPlan === 'free') {
     return (
       <div style={{ maxWidth: '800px', margin: '4rem auto', textAlign: 'center', padding: '4rem 2rem', background: 'var(--bg-card)', borderRadius: '32px', border: '1px solid var(--border)', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, #10b981, #6366f1)' }} />

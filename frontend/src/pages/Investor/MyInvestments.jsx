@@ -40,6 +40,24 @@ const MyInvestments = () => {
   const [showForm, setShowForm] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
   const [form, setForm] = useState(emptyInvestment());
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  const handleAddNewClick = async () => {
+    try {
+      const { data } = await api.get('/auth/limits');
+      const planLimits = data[user?.subscriptionPlan || 'free'];
+      const used = user?.usageStats?.investmentsMonth?.count || 0;
+      if (used >= planLimits.investments) {
+        setShowUpgradeModal(true);
+        return;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    setShowForm(true);
+    setEditIndex(null);
+    setForm(emptyInvestment());
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -199,7 +217,7 @@ const MyInvestments = () => {
             <h1 style={{ fontSize: '2.5rem', fontWeight: 900, letterSpacing: '-0.04em', marginBottom: '0.5rem' }}>My Investments</h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: 500 }}>Track and showcase your portfolio to founders.</p>
           </div>
-          <button onClick={() => { setShowForm(true); setEditIndex(null); setForm(emptyInvestment()); }} className="btn-sleek primary">
+          <button onClick={handleAddNewClick} className="btn-sleek primary">
             <Plus size={18} /> Add New Deal
           </button>
         </div>
@@ -223,7 +241,7 @@ const MyInvestments = () => {
           <TrendingUp size={48} color="var(--text-muted)" style={{ marginBottom: '1.5rem', opacity: 0.5 }} />
           <h3 style={{ fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Empty Portfolio</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>List your investments to build trust with founders.</p>
-          <button onClick={() => setShowForm(true)} className="btn-sleek primary" style={{ margin: '0 auto' }}>Start Portfolio</button>
+          <button onClick={handleAddNewClick} className="btn-sleek primary" style={{ margin: '0 auto' }}>Start Portfolio</button>
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
@@ -444,6 +462,25 @@ const MyInvestments = () => {
             <div style={{ display: 'flex', gap: '1rem' }}>
               <button onClick={() => setConfirmDelete(null)} className="btn-sleek secondary" style={{ flex: 1 }}>Cancel</button>
               <button onClick={proceedDelete} className="btn-sleek primary" style={{ flex: 1, background: '#f43f5e', boxShadow: '0 4px 12px rgba(244,63,94,0.2)' }}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showUpgradeModal && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 3000, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+          <div className="glass-card" style={{ maxWidth: '400px', width: '100%', padding: '2rem', textAlign: 'center' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(245,158,11,0.1)', color: '#f59e0b', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+              <TrendingUp size={32} />
+            </div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 900, marginBottom: '0.75rem' }}>Upgrade Your Plan</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '2rem', lineHeight: 1.5 }}>
+              You have reached your limit for adding investments on your current plan. Upgrade to a higher plan to add more and unlock premium features.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button onClick={() => setShowUpgradeModal(false)} className="btn-sleek secondary" style={{ flex: 1 }}>Cancel</button>
+              <Link to="/billing" style={{ flex: 1 }}>
+                <button className="btn-sleek primary" style={{ width: '100%', justifyContent: 'center', background: '#f59e0b', boxShadow: '0 4px 12px rgba(245,158,11,0.2)' }}>View Plans</button>
+              </Link>
             </div>
           </div>
         </div>

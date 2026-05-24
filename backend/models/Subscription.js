@@ -6,6 +6,7 @@ const subscriptionSchema = new mongoose.Schema(
     razorpayOrderId: { type: String, default: '' },
     razorpaySubscriptionId: { type: String, default: '' },
     plan: { type: String, enum: ['free', 'plus', 'pro', 'premium'], default: 'free' },
+    billingCycle: { type: String, enum: ['monthly', 'yearly'], default: 'monthly' },
     status: {
       type: String,
       enum: ['inactive', 'active', 'cancelled', 'past_due', 'trialing'],
@@ -22,6 +23,7 @@ const subscriptionSchema = new mongoose.Schema(
         status: String,
         paidAt: Date,
         hostedUrl: String,
+        billingCycle: { type: String, enum: ['monthly', 'yearly'], default: 'monthly' },
       },
     ],
   },

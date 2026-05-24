@@ -342,13 +342,117 @@ const Messages = () => {
     }
   };
 
+  const handleDownloadReceipt = (msg, installment = null) => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      toast.error('Please allow popups to download receipt');
+      return;
+    }
+    
+    const baseAmount = installment ? Number(installment.amount) : Number(msg.offerData.amount);
+    const commission = baseAmount * 0.02;
+    const totalAmount = baseAmount + commission;
+    const transactionId = installment ? (installment.razorpayPaymentId || installment._id) : (msg.offerData.razorpayPaymentId || msg._id);
+    const paymentDate = installment && installment.paidAt ? new Date(installment.paidAt).toLocaleDateString() : new Date(msg.updatedAt || msg.createdAt).toLocaleDateString();
+    const otherUser = getOtherUser(activeConv);
+
+    const investorName = user?.role === 'investor' ? user?.name : otherUser?.name;
+    const founderName = user?.role === 'founder' ? user?.name : otherUser?.name;
+
+    const htmlContent = `
+      <html>
+        <head>
+          <title>Receipt - ${transactionId}</title>
+          <style>
+            body { font-family: 'Inter', sans-serif; padding: 40px; color: #1e293b; line-height: 1.6; }
+            .container { max-width: 800px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 40px; }
+            .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 2px solid #e2e8f0; }
+            .logo-container { display: flex; align-items: center; gap: 10px; }
+            .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #6366f1, #a855f7); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 24px; }
+            .logo-text { font-size: 32px; font-weight: 900; background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; margin: 0; line-height: 1; }
+            .title { font-size: 24px; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 2px; }
+            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
+            .info-block strong { display: block; font-size: 12px; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
+            .info-block span { font-size: 16px; font-weight: 600; color: #0f172a; }
+            .details { background: #f8fafc; border-radius: 8px; padding: 20px; margin-bottom: 40px; }
+            .row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e2e8f0; }
+            .row:last-child { border-bottom: none; }
+            .row span:first-child { font-weight: 600; color: #475569; }
+            .row span:last-child { font-weight: 800; color: #0f172a; }
+            .total-row { display: flex; justify-content: space-between; padding: 20px 0 0; margin-top: 20px; border-top: 2px solid #cbd5e1; font-size: 20px; font-weight: 900; color: #10b981; }
+            .footer { text-align: center; margin-top: 40px; color: #64748b; font-size: 14px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <div class="logo-container">
+                <div class="logo-icon">P</div>
+                <div class="logo-text">P.I.E</div>
+              </div>
+              <div class="title">Investment Receipt</div>
+            </div>
+            
+            <div class="info-grid">
+              <div class="info-block">
+                <strong>Transaction ID</strong>
+                <span>${transactionId}</span>
+              </div>
+              <div class="info-block">
+                <strong>Date Paid</strong>
+                <span>${paymentDate}</span>
+              </div>
+              <div class="info-block">
+                <strong>Investor</strong>
+                <span>${investorName || 'Investor'}</span>
+              </div>
+              <div class="info-block">
+                <strong>Founder / Startup</strong>
+                <span>${founderName || 'Founder'} (${msg.offerData?.startupName || 'Startup'})</span>
+              </div>
+            </div>
+
+            <div class="details">
+              <div class="row">
+                <span>Description:</span>
+                <span>${installment ? 'Installment Payment' : 'Full Investment Payment'} - ${msg.offerData?.instrument || 'SAFE Note'} for ${msg.offerData?.equity}% Equity</span>
+              </div>
+              <div class="row">
+                <span>Base Investment Amount:</span>
+                <span>₹${baseAmount.toLocaleString('en-IN')}</span>
+              </div>
+              <div class="row">
+                <span>Platform Convenience Fee (2%):</span>
+                <span>₹${commission.toLocaleString('en-IN')}</span>
+              </div>
+              <div class="total-row">
+                <span>Total Amount Paid by Investor:</span>
+                <span>₹${totalAmount.toLocaleString('en-IN')}</span>
+              </div>
+            </div>
+
+            <div class="footer">
+              <p>Thank you for using the Platform for Investors & Entrepreneurs!</p>
+              <p>This is a computer-generated receipt and does not require a physical signature.</p>
+            </div>
+          </div>
+          <script>
+            window.onload = function() { window.print(); }
+          </script>
+        </body>
+      </html>
+    `;
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  };
+
   const getOtherUser = (conv) => {
     if (!conv || !conv.participants) return null;
     return conv.participants.find(p => p._id?.toString() !== user?._id?.toString()) || conv.participants[0];
   };
 
   // —— FREE PLAN LOCK GATE ——
-  const isFree = false; // !user?.subscriptionPlan || user?.subscriptionPlan === 'free';
+  const isFree = !user?.subscriptionPlan || user?.subscriptionPlan === 'free';
   if (isFree) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 'calc(100vh - 100px)', background: 'var(--bg-card)', borderRadius: '28px', border: '1px solid var(--border)', overflow: 'hidden', position: 'relative' }}>
@@ -743,8 +847,13 @@ const Messages = () => {
                                     </div>
                                     {user?.role === 'investor' && (
                                       msg.offerData?.paymentStatus === 'sent' ? (
-                                        <div style={{ width: '100%', textAlign: 'center', padding: '0.85rem', background: 'rgba(168,85,247,0.1)', color: '#a855f7', borderRadius: '14px', fontWeight: 800, fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', border: '1px solid rgba(168,85,247,0.2)' }}>
-                                          💸 Deal Fully Funded
+                                        <div style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
+                                          <div style={{ flex: 1, textAlign: 'center', padding: '0.85rem', background: 'rgba(168,85,247,0.1)', color: '#a855f7', borderRadius: '14px', fontWeight: 800, fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', border: '1px solid rgba(168,85,247,0.2)' }}>
+                                            💸 Deal Fully Funded
+                                          </div>
+                                          <button onClick={() => handleDownloadReceipt(msg)} style={{ padding: '0 1rem', background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '14px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(168,85,247,0.05)'} onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-secondary)'} title="Download Receipt">
+                                            <Download size={20} color="#a855f7" />
+                                          </button>
                                         </div>
                                       ) : (
                                         <button
@@ -758,8 +867,15 @@ const Messages = () => {
                                       )
                                     )}
                                     {user?.role === 'founder' && (msg.offerData?.paymentStatus === 'sent' || msg.offerData?.paymentStatus === 'partially_paid') && (
-                                      <div style={{ width: '100%', textAlign: 'center', padding: '0.85rem', background: 'rgba(168,85,247,0.1)', color: '#a855f7', borderRadius: '14px', fontWeight: 800, fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', border: '1px solid rgba(168,85,247,0.2)' }}>
-                                        💸 {msg.offerData?.paymentStatus === 'sent' ? 'Payment Received' : 'Partial Payment Received'}
+                                      <div style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
+                                        <div style={{ flex: 1, textAlign: 'center', padding: '0.85rem', background: 'rgba(168,85,247,0.1)', color: '#a855f7', borderRadius: '14px', fontWeight: 800, fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', border: '1px solid rgba(168,85,247,0.2)' }}>
+                                          💸 {msg.offerData?.paymentStatus === 'sent' ? 'Payment Received' : 'Partial Payment Received'}
+                                        </div>
+                                        {msg.offerData?.paymentStatus === 'sent' && (
+                                          <button onClick={() => handleDownloadReceipt(msg)} style={{ padding: '0 1rem', background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '14px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(168,85,247,0.05)'} onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-secondary)'} title="Download Receipt">
+                                            <Download size={20} color="#a855f7" />
+                                          </button>
+                                        )}
                                       </div>
                                     )}
                                     
@@ -774,11 +890,18 @@ const Messages = () => {
                                                 {inst.status === 'paid' ? <CheckCircle size={14} color="#10b981" /> : <Circle size={14} color="var(--text-muted)" />}
                                                 <span style={{ fontWeight: 600 }}>₹{Number(inst.amount).toLocaleString('en-IN')}</span>
                                               </div>
-                                              <div style={{ color: inst.status === 'paid' ? '#10b981' : 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 700 }}>
-                                                {inst.status === 'paid' 
-                                                  ? `Paid ${inst.paidAt ? format(new Date(inst.paidAt), 'MMM d') : 'N/A'}` 
-                                                  : `Due ${inst.dueDate ? format(new Date(inst.dueDate), 'MMM d') : 'N/A'}`
-                                                }
+                                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <div style={{ color: inst.status === 'paid' ? '#10b981' : 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 700 }}>
+                                                  {inst.status === 'paid' 
+                                                    ? `Paid ${inst.paidAt ? format(new Date(inst.paidAt), 'MMM d') : 'N/A'}` 
+                                                    : `Due ${inst.dueDate ? format(new Date(inst.dueDate), 'MMM d') : 'N/A'}`
+                                                  }
+                                                </div>
+                                                {inst.status === 'paid' && (
+                                                  <button onClick={() => handleDownloadReceipt(msg, inst)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#10b981', display: 'flex', alignItems: 'center' }} title="Download Receipt">
+                                                    <Download size={14} />
+                                                  </button>
+                                                )}
                                               </div>
                                             </div>
                                           ))}

@@ -10,6 +10,7 @@ const PLANS = [
     id: 'free', 
     name: 'PIE Free', 
     price: 0, 
+    yearlyPrice: 0,
     color: 'var(--text-secondary)', 
     features: [
       '5 connections/month',
@@ -26,6 +27,7 @@ const PLANS = [
     id: 'plus', 
     name: 'PIE Plus', 
     price: 51, 
+    yearlyPrice: 490,
     color: '#10b981', 
     features: [
       '10 connections/month',
@@ -43,6 +45,7 @@ const PLANS = [
     id: 'pro', 
     name: 'PIE Pro', 
     price: 101, 
+    yearlyPrice: 969,
     color: '#6366f1', 
     features: [
       '20 connections/month',
@@ -61,6 +64,7 @@ const PLANS = [
     id: 'premium', 
     name: 'PIE Premium', 
     price: 251, 
+    yearlyPrice: 2409,
     color: '#8b5cf6', 
     features: [
       'Everything Unlimited',
@@ -102,7 +106,7 @@ const Pricing = () => {
         return;
       }
 
-      const { data: order } = await api.post('/payments/create-order', { plan: planId });
+      const { data: order } = await api.post('/payments/create-order', { plan: planId, yearly });
       
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -117,11 +121,13 @@ const Pricing = () => {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              plan: planId
+              plan: planId,
+              yearly
             });
             
             if (data.success) {
               toast.success('Subscription upgraded successfully!');
+              await useAuthStore.getState().fetchMe();
               // Refresh user data if possible or redirect
               navigate('/billing');
             }

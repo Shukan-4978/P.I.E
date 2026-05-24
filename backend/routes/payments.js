@@ -15,18 +15,18 @@ const razorpay = new Razorpay({
 });
 
 const PLANS = {
-  plus: { name: 'Plus', priceInr: 51 },
-  pro: { name: 'Pro', priceInr: 101 },
-  premium: { name: 'Premium', priceInr: 251 },
+  plus: { name: 'Plus', priceInr: 51, yearlyPriceInr: 490 },
+  pro: { name: 'Pro', priceInr: 101, yearlyPriceInr: 969 },
+  premium: { name: 'Premium', priceInr: 251, yearlyPriceInr: 2409 },
 };
 
 // POST /api/payments/create-order (For Plans)
 router.post('/create-order', auth, async (req, res, next) => {
   try {
-    const { plan } = req.body;
+    const { plan, yearly } = req.body;
     if (!PLANS[plan]) return res.status(400).json({ error: 'Invalid plan.' });
 
-    const baseAmount = PLANS[plan].priceInr;
+    const baseAmount = yearly ? PLANS[plan].yearlyPriceInr : PLANS[plan].priceInr;
     const commission = baseAmount * 0.02;
     const totalAmount = baseAmount + commission;
 
@@ -39,7 +39,8 @@ router.post('/create-order', auth, async (req, res, next) => {
         plan: plan,
         type: 'subscription_upgrade',
         baseAmount: baseAmount,
-        commission: commission
+        commission: commission,
+        yearly: yearly ? 'true' : 'false'
       }
     };
 
@@ -54,7 +55,7 @@ router.post('/create-order', auth, async (req, res, next) => {
 // POST /api/payments/verify-payment
 router.post('/verify-payment', auth, async (req, res, next) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, plan, messageId, installmentId } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, plan, yearly, messageId, installmentId } = req.body;
 
     // Verify signature
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
@@ -70,7 +71,11 @@ router.post('/verify-payment', auth, async (req, res, next) => {
     // If it's a subscription upgrade
     if (plan && PLANS[plan]) {
       const expiryDate = new Date();
-      expiryDate.setDate(expiryDate.getDate() + 30); // 30 days access
+      if (yearly) {
+        expiryDate.setDate(expiryDate.getDate() + 365); // 365 days access
+      } else {
+        expiryDate.setDate(expiryDate.getDate() + 30); // 30 days access
+      }
 
       await User.findByIdAndUpdate(req.user._id, {
         subscriptionStatus: 'active',
@@ -82,16 +87,18 @@ router.post('/verify-payment', auth, async (req, res, next) => {
         {
           razorpayOrderId: razorpay_order_id,
           plan,
+          billingCycle: yearly ? 'yearly' : 'monthly',
           status: 'active',
           currentPeriodStart: new Date(),
           currentPeriodEnd: expiryDate,
           $push: {
             billingHistory: {
               invoiceId: razorpay_payment_id,
-              amount: PLANS[plan].priceInr,
+              amount: yearly ? PLANS[plan].yearlyPriceInr : PLANS[plan].priceInr,
               currency: 'INR',
               status: 'paid',
               paidAt: new Date(),
+              billingCycle: yearly ? 'yearly' : 'monthly',
             },
           },
         },
@@ -101,11 +108,11 @@ router.post('/verify-payment', auth, async (req, res, next) => {
       // Record transaction
       await Transaction.create({
         type: 'subscription',
-        amount: PLANS[plan].priceInr,
+        amount: yearly ? PLANS[plan].yearlyPriceInr : PLANS[plan].priceInr,
         user: req.user._id,
         razorpay_payment_id,
         razorpay_order_id,
-        metadata: { plan, commission: PLANS[plan].priceInr * 0.02 }
+        metadata: { plan, commission: (yearly ? PLANS[plan].yearlyPriceInr : PLANS[plan].priceInr) * 0.02, yearly }
       });
 
       return res.json({ success: true, message: 'Subscription upgraded successfully' });

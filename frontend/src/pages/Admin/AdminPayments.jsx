@@ -3,7 +3,7 @@ import {
   DollarSign, CreditCard, Calendar, User, TrendingUp, 
   ArrowRight, Wallet, Rocket, Filter, Search,
   ArrowUpRight, ShieldCheck, Clock, Download,
-  MoreVertical, ChevronRight, CheckCircle, Info
+  MoreVertical, ChevronRight, CheckCircle, Info, FileText
 } from 'lucide-react';
 import { format } from 'date-fns';
 import api from '../../services/api';
@@ -16,6 +16,7 @@ const AdminPayments = () => {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [activeTab, setActiveTab] = useState('subscription');
 
   const fetchPayments = async () => {
     setLoading(true);
@@ -40,7 +41,114 @@ const AdminPayments = () => {
     investment_commission: { label: 'Deal Commission', icon: Wallet, color: '#10b981', bg: 'rgba(16,185,129,0.1)' }
   };
 
-  const totalProfit = stats.reduce((acc, s) => acc + s.revenue, 0);
+  const filteredTransactions = transactions.filter(t => t.type === activeTab);
+  const activeStat = stats.find(s => s._id === activeTab) || { revenue: 0, count: 0 };
+  const totalProfit = activeStat.revenue;
+
+  const generateReceipt = (t) => {
+    const isSub = t.type === 'subscription';
+    const printWindow = window.open('', '_blank');
+    const amount = t.amount || 0;
+    
+    let baseAmountHtml = '';
+    if (t.metadata?.baseAmount) {
+      baseAmountHtml = `
+        <div class="row">
+          <span>Deal Amount:</span>
+          <span>₹${t.metadata.baseAmount.toLocaleString()}</span>
+        </div>
+        <div class="row">
+          <span>PIE Commission (2%):</span>
+          <span>₹${amount.toLocaleString()}</span>
+        </div>
+      `;
+    } else {
+      baseAmountHtml = `
+        <div class="row">
+          <span>Amount Paid:</span>
+          <span>₹${amount.toLocaleString()}</span>
+        </div>
+      `;
+    }
+
+    const htmlContent = `
+      <html>
+        <head>
+          <title>Receipt - ${t.razorpay_payment_id || t._id}</title>
+          <style>
+            body { font-family: 'Inter', sans-serif; padding: 40px; color: #1e293b; line-height: 1.6; }
+            .container { max-width: 800px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 40px; }
+            .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 2px solid #e2e8f0; }
+            .logo { font-size: 32px; font-weight: 900; background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
+            .title { font-size: 24px; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 2px; }
+            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
+            .info-block strong { display: block; font-size: 12px; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
+            .info-block span { font-size: 16px; font-weight: 600; color: #0f172a; }
+            .details { background: #f8fafc; border-radius: 8px; padding: 20px; margin-bottom: 40px; }
+            .row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e2e8f0; }
+            .row:last-child { border-bottom: none; }
+            .row span:first-child { font-weight: 600; color: #475569; }
+            .row span:last-child { font-weight: 800; color: #0f172a; }
+            .total-row { display: flex; justify-content: space-between; padding: 20px 0 0; margin-top: 20px; border-top: 2px solid #cbd5e1; font-size: 20px; font-weight: 900; color: #10b981; }
+            .footer { text-align: center; margin-top: 40px; color: #64748b; font-size: 14px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <div class="logo">P.I.E</div>
+              <div class="title">Payment Receipt</div>
+            </div>
+            
+            <div class="info-grid">
+              <div class="info-block">
+                <strong>Transaction ID</strong>
+                <span>${t.razorpay_payment_id || t._id}</span>
+              </div>
+              <div class="info-block">
+                <strong>Date</strong>
+                <span>${new Date(t.createdAt).toLocaleDateString()}</span>
+              </div>
+              <div class="info-block">
+                <strong>Payment Type</strong>
+                <span style="text-transform: capitalize;">${t.type.replace('_', ' ')}</span>
+              </div>
+              <div class="info-block">
+                <strong>Status</strong>
+                <span style="color: #10b981; text-transform: uppercase;">${t.status}</span>
+              </div>
+            </div>
+
+            <div class="details">
+              <div class="row">
+                <span>Description:</span>
+                <span>${isSub ? 'Platform Subscription Upgrade' : 'Deal Commission'} ${t.metadata?.plan ? '(' + t.metadata.plan + ')' : ''}</span>
+              </div>
+              <div class="row">
+                <span>User / Entity:</span>
+                <span>${isSub ? t.user?.name : t.investor?.name + ' (Investor) -> ' + t.startup?.title + ' (Startup)'}</span>
+              </div>
+              ${baseAmountHtml}
+              <div class="total-row">
+                <span>Total Paid</span>
+                <span>₹${amount.toLocaleString()}</span>
+              </div>
+            </div>
+
+            <div class="footer">
+              <p>Thank you for using the Platform for Investors & Entrepreneurs!</p>
+              <p>This is a computer-generated receipt.</p>
+            </div>
+          </div>
+          <script>
+            window.onload = function() { window.print(); }
+          </script>
+        </body>
+      </html>
+    `;
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
@@ -59,7 +167,9 @@ const AdminPayments = () => {
         <div style={{ display: 'flex', gap: '1rem' }}>
           <div className="card" style={{ padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', borderRadius: '16px', background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
             <div>
-              <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Net Realized Profit</div>
+              <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                {activeTab === 'subscription' ? 'Subscription Profit' : 'Commission Profit'}
+              </div>
               <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#10b981' }}>₹{totalProfit.toLocaleString()}</div>
             </div>
             <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -69,47 +179,31 @@ const AdminPayments = () => {
         </div>
       </div>
 
-      {/* Stats Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
-        {stats.map((s, idx) => {
-          const config = TYPE_CONFIG[s._id] || { label: s._id, icon: DollarSign, color: '#64748b', bg: '#f1f5f9' };
-          return (
-            <motion.div 
-              key={s._id} 
-              initial={{ opacity: 0, y: 20 }} 
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              className="card" 
-              style={{ padding: '1.75rem', borderRadius: '24px', background: 'var(--bg-card)', border: '1px solid var(--border)', position: 'relative', overflow: 'hidden' }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: config.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <config.icon size={24} color={config.color} />
-                </div>
-                <div style={{ padding: '0.4rem 0.75rem', borderRadius: '999px', background: 'rgba(16,185,129,0.1)', color: '#10b981', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase' }}>
-                  Verified
-                </div>
-              </div>
-              <div style={{ fontSize: '2.25rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '0.25rem', letterSpacing: '-0.03em' }}>₹{s.revenue?.toLocaleString()}</div>
-              <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 700 }}>{config.label} Revenue</div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Clock size={12} /> From {s.count} unique transactions
-              </div>
-            </motion.div>
-          );
-        })}
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: '1rem', borderBottom: '2px solid var(--border)', paddingBottom: '0.5rem' }}>
+        <button 
+          onClick={() => setActiveTab('subscription')}
+          style={{ padding: '0.75rem 1.5rem', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 800, border: 'none', cursor: 'pointer', transition: 'all 0.2s', background: activeTab === 'subscription' ? 'var(--brand-500)' : 'transparent', color: activeTab === 'subscription' ? 'white' : 'var(--text-secondary)' }}
+        >
+          <CreditCard size={16} style={{ display: 'inline', marginRight: '8px', verticalAlign: 'text-bottom' }} />
+          Subscriptions
+        </button>
+        <button 
+          onClick={() => setActiveTab('investment_commission')}
+          style={{ padding: '0.75rem 1.5rem', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 800, border: 'none', cursor: 'pointer', transition: 'all 0.2s', background: activeTab === 'investment_commission' ? 'var(--brand-500)' : 'transparent', color: activeTab === 'investment_commission' ? 'white' : 'var(--text-secondary)' }}
+        >
+          <Wallet size={16} style={{ display: 'inline', marginRight: '8px', verticalAlign: 'text-bottom' }} />
+          Deal Commissions
+        </button>
       </div>
 
       {/* Transactions Ledger */}
       <div className="card" style={{ borderRadius: '24px', overflow: 'hidden', border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
         <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-secondary)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 900 }}>Transaction Ledger</h3>
-            <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.6rem', borderRadius: '6px', background: 'var(--bg-card)', color: 'var(--text-muted)', fontWeight: 700, border: '1px solid var(--border)' }}>{total} Records</span>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 900 }}>{activeTab === 'subscription' ? 'Subscription Records' : 'Commission Records'}</h3>
+            <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.6rem', borderRadius: '6px', background: 'var(--bg-card)', color: 'var(--text-muted)', fontWeight: 700, border: '1px solid var(--border)' }}>{activeStat.count} Total</span>
           </div>
-          <button style={{ padding: '0.5rem 1rem', borderRadius: '10px', border: '1px solid var(--border)', background: 'var(--bg-card)', fontSize: '0.8rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-            <Download size={14} /> Export CSV
-          </button>
         </div>
 
         <div style={{ overflowX: 'auto' }}>
@@ -121,13 +215,16 @@ const AdminPayments = () => {
                 <th style={{ padding: '1.25rem 1.5rem' }}>Type</th>
                 <th style={{ padding: '1.25rem 1.5rem' }}>Platform Profit</th>
                 <th style={{ padding: '1.25rem 1.5rem' }}>Execution Date</th>
+                <th style={{ padding: '1.25rem 1.5rem', textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                [1,2,3,4,5].map(i => <tr key={i}><td colSpan="5" style={{ padding: '1.5rem' }}><div className="skeleton" style={{ height: '50px', borderRadius: '12px' }} /></td></tr>)
+                [1,2,3,4,5].map(i => <tr key={i}><td colSpan="6" style={{ padding: '1.5rem' }}><div className="skeleton" style={{ height: '50px', borderRadius: '12px' }} /></td></tr>)
+              ) : filteredTransactions.length === 0 ? (
+                <tr><td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)', fontWeight: 600 }}>No transactions found for this category.</td></tr>
               ) : (
-                transactions.map((t, idx) => {
+                filteredTransactions.map((t, idx) => {
                   const config = TYPE_CONFIG[t.type] || { label: t.type, icon: DollarSign, color: '#64748b', bg: '#f1f5f9' };
                   return (
                     <motion.tr 
@@ -139,8 +236,8 @@ const AdminPayments = () => {
                       className="table-row-hover"
                     >
                       <td style={{ padding: '1.25rem 1.5rem' }}>
-                        <div style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{t.razorpay_payment_id || 'ID_PENDING'}</div>
-                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>ORD_{t.razorpay_order_id?.slice(-8)}</div>
+                        <div style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{t.razorpay_payment_id || t._id.slice(-8).toUpperCase()}</div>
+                        {t.razorpay_order_id && <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>ORD_{t.razorpay_order_id.slice(-8)}</div>}
                       </td>
                       <td style={{ padding: '1.25rem 1.5rem' }}>
                         {t.type === 'subscription' ? (
@@ -187,6 +284,15 @@ const AdminPayments = () => {
                         <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)' }}>{format(new Date(t.createdAt), 'MMM dd, yyyy')}</div>
                         <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Executed at {format(new Date(t.createdAt), 'HH:mm')}</div>
                       </td>
+                      <td style={{ padding: '1.25rem 1.5rem', textAlign: 'right' }}>
+                        <button 
+                          onClick={() => generateReceipt(t)}
+                          style={{ padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-secondary)', fontSize: '0.75rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', transition: 'all 0.2s', color: 'var(--text-primary)' }}
+                          className="btn-hover"
+                        >
+                          <FileText size={14} /> Receipt
+                        </button>
+                      </td>
                     </motion.tr>
                   );
                 })
@@ -194,13 +300,12 @@ const AdminPayments = () => {
             </tbody>
           </table>
         </div>
-
+        
         {/* Footer / Pagination */}
         <div style={{ padding: '1.25rem 1.5rem', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-secondary)' }}>
           <button onClick={() => setPage(p => Math.max(1, p-1))} className="btn-secondary" disabled={page === 1} style={{ padding: '0.6rem 1.25rem', fontSize: '0.85rem', fontWeight: 700 }}>Previous</button>
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <span style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 800 }}>Page {page}</span>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>of {Math.ceil(total / 20) || 1}</span>
           </div>
           <button onClick={() => setPage(p => p+1)} className="btn-secondary" disabled={transactions.length < 20} style={{ padding: '0.6rem 1.25rem', fontSize: '0.85rem', fontWeight: 700 }}>Next</button>
         </div>
@@ -209,6 +314,11 @@ const AdminPayments = () => {
       <style>{`
         .table-row-hover:hover {
           background: rgba(99,102,241,0.02) !important;
+        }
+        .btn-hover:hover {
+          background: var(--brand-500) !important;
+          color: white !important;
+          border-color: var(--brand-500) !important;
         }
         .skeleton {
           background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--border) 50%, var(--bg-secondary) 75%);
