@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   Heart, MessageCircle, Bookmark, Share2, MoreHorizontal, Eye,
   Send, Trash2, ExternalLink, TrendingUp, UserPlus, Clock,
-  BadgeCheck, ChevronDown, ChevronUp
+  BadgeCheck, ChevronDown, ChevronUp, UserCheck
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import api from '../../services/api';
@@ -38,14 +38,30 @@ const PostCard = ({ post, onUpdate, onDelete }) => {
   const [localConnectStatus, setLocalConnectStatus] = useState('none');
   const navigate = useNavigate();
 
+  // Compute initial connection status from post data
+  const isAlreadyFollower = post.author?.followers?.some(
+    f => (typeof f === 'string' ? f : f._id?.toString()) === user?._id?.toString()
+  );
+  const hasPendingRequest = post.author?.connectionRequests?.some(
+    r => (r.from?.toString() || r.from?._id?.toString()) === user?._id?.toString() && r.status === 'pending'
+  );
+  // Derive the effective connect status (local overrides once user acts)
+  const effectiveConnectStatus = localConnectStatus !== 'none'
+    ? localConnectStatus
+    : isAlreadyFollower
+      ? 'connected'
+      : hasPendingRequest
+        ? 'pending'
+        : 'none';
+
   const typeMeta = TYPE_META[post.type] || TYPE_META.general;
 
   const authorAvatarUrl = post.author?.avatar
-    ? `http://localhost:5000${post.author.avatar}`
+    ? `http://localhost:1110${post.author.avatar}`
     : `https://ui-avatars.com/api/?name=${encodeURIComponent(post.author?.name || 'U')}&background=6366f1&color=fff&size=40`;
 
   const userAvatarUrl = user?.avatar
-    ? `http://localhost:5000${user.avatar}`
+    ? `http://localhost:1110${user.avatar}`
     : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=6366f1&color=fff`;
 
   const handleConnect = async (e, userId) => {
@@ -56,7 +72,13 @@ const PostCard = ({ post, onUpdate, onDelete }) => {
       setLocalConnectStatus('pending');
       toast.success('Connection request sent!');
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to send request');
+      const errMsg = err.response?.data?.error || '';
+      if (errMsg.toLowerCase().includes('already connected')) {
+        setLocalConnectStatus('connected');
+        toast.success('You are already connected!');
+      } else {
+        toast.error(errMsg || 'Failed to send request');
+      }
     } finally {
       setConnectLoading(false);
     }
@@ -266,15 +288,19 @@ const PostCard = ({ post, onUpdate, onDelete }) => {
       )}
 
       {/* ── CTA Banners ── */}
-      {post.type === 'funding_need' && user?.role === 'investor' && !post.author?.followers?.some(f => (typeof f === 'string' ? f : f._id)?.toString() === user?._id?.toString()) && (
+      {post.type === 'funding_need' && user?.role === 'investor' && !isOwner && (
         <div style={{ margin: '0 1.25rem 1rem', padding: '1rem', background: 'linear-gradient(135deg, rgba(244,63,94,0.06), rgba(244,63,94,0.02))', border: '1px solid rgba(244,63,94,0.15)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
           <div>
             <div style={{ fontSize: '0.875rem', fontWeight: 800, color: '#f43f5e', marginBottom: '0.2rem' }}>Funding Opportunity</div>
             <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>This founder is actively seeking investment.</div>
           </div>
-          {localConnectStatus === 'pending' ? (
+          {effectiveConnectStatus === 'connected' ? (
+            <button disabled style={{ padding: '0.5rem 1rem', borderRadius: '10px', background: 'rgba(16,185,129,0.12)', color: '#10b981', border: '1px solid rgba(16,185,129,0.25)', fontWeight: 700, fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <UserCheck size={14} /> Connected
+            </button>
+          ) : effectiveConnectStatus === 'pending' ? (
             <button disabled style={{ padding: '0.5rem 1rem', borderRadius: '10px', background: 'rgba(244,63,94,0.1)', color: '#f43f5e', border: '1px solid rgba(244,63,94,0.2)', fontWeight: 700, fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Clock size={14} /> Sent
+              <Clock size={14} /> Requested
             </button>
           ) : (
             <button onClick={(e) => handleConnect(e, post.author._id)} disabled={connectLoading} style={{ padding: '0.5rem 1rem', borderRadius: '10px', background: '#f43f5e', color: 'white', border: 'none', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -284,15 +310,19 @@ const PostCard = ({ post, onUpdate, onDelete }) => {
         </div>
       )}
 
-      {post.type === 'investor_intro' && user?.role === 'founder' && !post.author?.followers?.some(f => (typeof f === 'string' ? f : f._id)?.toString() === user?._id?.toString()) && (
+      {post.type === 'investor_intro' && user?.role === 'founder' && !isOwner && (
         <div style={{ margin: '0 1.25rem 1rem', padding: '1rem', background: 'linear-gradient(135deg, rgba(16,185,129,0.06), rgba(16,185,129,0.02))', border: '1px solid rgba(16,185,129,0.15)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
           <div>
             <div style={{ fontSize: '0.875rem', fontWeight: 800, color: '#10b981', marginBottom: '0.2rem' }}>Active Investor</div>
             <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Looking for promising startups to back.</div>
           </div>
-          {localConnectStatus === 'pending' ? (
+          {effectiveConnectStatus === 'connected' ? (
+            <button disabled style={{ padding: '0.5rem 1rem', borderRadius: '10px', background: 'rgba(16,185,129,0.12)', color: '#10b981', border: '1px solid rgba(16,185,129,0.25)', fontWeight: 700, fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <UserCheck size={14} /> Connected
+            </button>
+          ) : effectiveConnectStatus === 'pending' ? (
             <button disabled style={{ padding: '0.5rem 1rem', borderRadius: '10px', background: 'rgba(16,185,129,0.1)', color: '#10b981', border: '1px solid rgba(16,185,129,0.2)', fontWeight: 700, fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Clock size={14} /> Sent
+              <Clock size={14} /> Requested
             </button>
           ) : (
             <button onClick={(e) => handleConnect(e, post.author._id)} disabled={connectLoading} style={{ padding: '0.5rem 1rem', borderRadius: '10px', background: '#10b981', color: 'white', border: 'none', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -319,7 +349,7 @@ const PostCard = ({ post, onUpdate, onDelete }) => {
           {post.images.slice(0, 4).map((img, i) => (
             <img
               key={i}
-              src={`http://localhost:5000${img}`}
+              src={`http://localhost:1110${img}`}
               style={{ width: '100%', aspectRatio: post.images.length === 1 ? '16/9' : '1/1', objectFit: 'cover', maxHeight: '420px' }}
               alt=""
             />
@@ -392,7 +422,7 @@ const PostCard = ({ post, onUpdate, onDelete }) => {
               {commentsToShow?.map((c, i) => (
                 <div key={i} style={{ display: 'flex', gap: '0.625rem', alignItems: 'flex-start' }}>
                   <img
-                    src={c.author?.avatar ? `http://localhost:5000${c.author.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.author?.name || 'U')}&background=6366f1&color=fff`}
+                    src={c.author?.avatar ? `http://localhost:1110${c.author.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.author?.name || 'U')}&background=6366f1&color=fff`}
                     style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
                     alt=""
                   />

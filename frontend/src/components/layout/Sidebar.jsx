@@ -113,7 +113,7 @@ const Sidebar = () => {
           <button
             onClick={() => setCollapsed(true)}
             className="btn-ghost"
-            style={{ width: '32px', height: '32px', padding: 0, borderRadius: '10px', minWidth: 0, background: 'var(--bg-tertiary)' }}
+            style={{ width: '32px', height: '32px', padding: 0, borderRadius: '10px', minWidth: 0, background: 'var(--bg-tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
             <ChevronLeft size={16} />
           </button>

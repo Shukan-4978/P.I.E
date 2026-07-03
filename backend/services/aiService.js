@@ -103,7 +103,7 @@ Be honest, objective, and thorough in your analysis. Base scores on the quality 
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
@@ -164,7 +164,7 @@ Keep your responses concise, professional, actionable, and formatted nicely.`;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-2.5-flash',
       systemInstruction: systemInstruction,
       contents: [
         ...formattedHistory,

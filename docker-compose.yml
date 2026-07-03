@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "1110:1110"
+    environment:
+      - PORT=1110
+      - MONGO_URI=${MONGO_URI:-mongodb://mongo:27017/pie-platform}
+      - JWT_SECRET=${JWT_SECRET:-your_super_secret_jwt_key}
+      - CLIENT_URL=${CLIENT_URL:-http://localhost:80}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      # Add other necessary env variables (RAZORPAY, OPENAI, AWS etc.) here
+    depends_on:
+      - mongo
+      - redis
+    volumes:
+      - ./backend/uploads:/usr/src/app/uploads
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
+  redis_data:

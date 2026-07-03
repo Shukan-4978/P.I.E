@@ -610,7 +610,7 @@ const Messages = () => {
                 return (
                   <div key={conv._id} onClick={() => selectConversation(conv)} className={`conv-item ${isActive ? 'active' : ''}`} style={{ padding: '1rem', display: 'flex', gap: '1rem', alignItems: 'center', cursor: 'pointer' }}>
                     <div style={{ position: 'relative', flexShrink: 0 }}>
-                      <img src={other?.avatar ? `http://localhost:5000${other.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(other?.name || 'U')}&background=6366f1&color=fff&size=48`} style={{ width: '48px', height: '48px', borderRadius: '16px', objectFit: 'cover', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} alt="" />
+                      <img src={other?.avatar ? `http://localhost:1110${other.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(other?.name || 'U')}&background=6366f1&color=fff&size=48`} style={{ width: '48px', height: '48px', borderRadius: '16px', objectFit: 'cover', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} alt="" />
                       {isOnline && <span style={{ position: 'absolute', bottom: -2, right: -2, width: '14px', height: '14px', background: '#10b981', borderRadius: '50%', border: '3px solid var(--bg-secondary)' }} />}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -662,7 +662,7 @@ const Messages = () => {
                   </button>
                 )}
                 <div style={{ position: 'relative' }}>
-                  <img src={other?.avatar ? `http://localhost:5000${other.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(other?.name || 'U')}&background=6366f1&color=fff&size=48`} style={{ width: '48px', height: '48px', borderRadius: '16px', objectFit: 'cover' }} alt="" />
+                  <img src={other?.avatar ? `http://localhost:1110${other.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(other?.name || 'U')}&background=6366f1&color=fff&size=48`} style={{ width: '48px', height: '48px', borderRadius: '16px', objectFit: 'cover' }} alt="" />
                   {isOnline && <span style={{ position: 'absolute', bottom: -2, right: -2, width: '14px', height: '14px', background: '#10b981', borderRadius: '50%', border: '3px solid var(--bg-card)' }} />}
                 </div>
                 <div>
@@ -734,7 +734,7 @@ const Messages = () => {
                 const isSelected = selectedMessages.includes(msg._id);
                 return (
                   <div key={msg._id || i} className="msg-row" style={{ display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start', gap: '1rem', alignItems: 'flex-end', transition: '0.2s', background: isSelected ? 'rgba(244,63,94,0.05)' : 'transparent', padding: isSelected ? '8px' : '0', borderRadius: '16px' }}>
-                    {!isMe && <img src={other?.avatar ? `http://localhost:5000${other.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(other?.name || 'U')}&background=6366f1&color=fff`} style={{ width: '36px', height: '36px', borderRadius: '12px', marginBottom: '4px', objectFit: 'cover' }} alt="" />}
+                    {!isMe && <img src={other?.avatar ? `http://localhost:1110${other.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(other?.name || 'U')}&background=6366f1&color=fff`} style={{ width: '36px', height: '36px', borderRadius: '12px', marginBottom: '4px', objectFit: 'cover' }} alt="" />}
                     
                     {isMe && (
                       <div className="msg-checkbox-wrapper" style={{ display: 'flex', alignItems: 'center', opacity: isSelected || selectedMessages.length > 0 ? 1 : 0, transition: '0.2s', paddingBottom: '0.5rem' }}>
@@ -771,7 +771,7 @@ const Messages = () => {
                         )}
                         {msg.type === 'image' && (
                           <div style={{ borderRadius: '20px', overflow: 'hidden', border: '1px solid var(--border)', background: 'var(--bg-secondary)', boxShadow: '0 8px 24px rgba(0,0,0,0.05)' }}>
-                            <img src={`http://localhost:5000${msg.attachments?.[0]?.url}`} style={{ maxWidth: '100%', maxHeight: '350px', display: 'block', cursor: 'pointer' }} alt="Attachment" onClick={() => window.open(`http://localhost:5000${msg.attachments?.[0]?.url}`)} />
+                            <img src={`http://localhost:1110${msg.attachments?.[0]?.url}`} style={{ maxWidth: '100%', maxHeight: '350px', display: 'block', cursor: 'pointer' }} alt="Attachment" onClick={() => window.open(`http://localhost:1110${msg.attachments?.[0]?.url}`)} />
                           </div>
                         )}
                         {msg.type === 'file' && (
@@ -781,7 +781,7 @@ const Messages = () => {
                               <div style={{ fontWeight: 800, fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{msg.attachments?.[0]?.name}</div>
                               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{(msg.attachments?.[0]?.size / 1024 / 1024).toFixed(2)} MB</div>
                             </div>
-                            <a href={`http://localhost:5000${msg.attachments?.[0]?.url}`} download className="btn-ghost" style={{ padding: '10px', borderRadius: '12px' }}><Download size={20} /></a>
+                            <a href={`http://localhost:1110${msg.attachments?.[0]?.url}`} download className="btn-ghost" style={{ padding: '10px', borderRadius: '12px' }}><Download size={20} /></a>
                           </div>
                         )}
                         {msg.type === 'offer' && (

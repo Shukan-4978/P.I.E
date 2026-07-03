@@ -281,7 +281,7 @@ const AdminDashboard = () => {
             {stats?.recentInvestments?.filter(inv => inv.investment?.status === 'pending').slice(0, 3).map((inv, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', borderRadius: '20px', background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <img src={inv.avatar ? `http://localhost:5000${inv.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(inv.name)}&background=10b981&color=fff`} style={{ width: '48px', height: '48px', borderRadius: '14px', border: '1px solid var(--border)' }} alt="" />
+                  <img src={inv.avatar ? `http://localhost:1110${inv.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(inv.name)}&background=10b981&color=fff`} style={{ width: '48px', height: '48px', borderRadius: '14px', border: '1px solid var(--border)' }} alt="" />
                   <div>
                     <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>{inv.investment.companyName}</div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>{inv.name} • {inv.investment.amount}</div>

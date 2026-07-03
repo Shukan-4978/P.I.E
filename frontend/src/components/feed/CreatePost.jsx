@@ -70,7 +70,7 @@ const CreatePost = ({ onPostCreated, onCancel }) => {
   const selectedType = POST_TYPES.find(t => t.value === type) || POST_TYPES[0];
   const SelectedIcon = selectedType.icon;
   const avatarUrl = user?.avatar
-    ? `http://localhost:5000${user.avatar}`
+    ? `http://localhost:1110${user.avatar}`
     : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=6366f1&color=fff&size=40`;
 
   return (

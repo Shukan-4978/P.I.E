@@ -85,7 +85,7 @@ const AdminAIAnalysis = () => {
                 <tr key={a._id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'var(--bg-secondary)'} onMouseOut={e => e.currentTarget.style.background = 'none'}>
                   <td style={{ padding: '1rem 1.25rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <img src={a.uploadedBy?.avatar ? `http://localhost:5000${a.uploadedBy.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(a.uploadedBy?.name || 'U')}&background=6366f1&color=fff`} style={{ width: '32px', height: '32px', borderRadius: '8px' }} alt="" />
+                      <img src={a.uploadedBy?.avatar ? `http://localhost:1110${a.uploadedBy.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(a.uploadedBy?.name || 'U')}&background=6366f1&color=fff`} style={{ width: '32px', height: '32px', borderRadius: '8px' }} alt="" />
                       <div>
                         <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{a.uploadedBy?.name}</div>
                         <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{a.uploadedBy?.email}</div>
@@ -99,7 +99,7 @@ const AdminAIAnalysis = () => {
                     </div>
                   </td>
                   <td style={{ padding: '1rem 1.25rem' }}>
-                    <a href={`http://localhost:5000${a.pitchDeckUrl}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#6366f1', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 500 }}>
+                    <a href={`http://localhost:1110${a.pitchDeckUrl}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#6366f1', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 500 }}>
                       <FileText size={14} />
                       <span style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.originalFileName || 'View PDF'}</span>
                       <ExternalLink size={12} />

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Compass, Search, UserPlus, Clock, Check, Sparkles, Cpu, HeartPulse, Truck, Layout, ShoppingBag, Leaf, Home, GraduationCap, Globe, Zap, ChevronRight, MapPin, BarChart3, Building2, ArrowRight, Lock } from 'lucide-react';
+import { Compass, Search, UserPlus, Clock, Check, Sparkles, Cpu, HeartPulse, Truck, Layout, ShoppingBag, Leaf, Home, GraduationCap, Globe, Zap, ChevronRight, MapPin, BarChart3, Building2, ArrowRight, Lock, Rocket, TrendingUp, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../services/api';
 import useAuthStore from '../store/authStore';
@@ -22,9 +22,112 @@ const categories = [
 const stagger = { animate: { transition: { staggerChildren: 0.05 } } };
 const fadeUp = { initial: { opacity: 0, y: 30 }, animate: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 200, damping: 20 } }, exit: { opacity: 0, y: -20 } };
 
+// ── Plan Gate Overlay ──────────────────────────────────────────────────────
+const PlanGate = ({ feature, requiredPlan = 'plus', me }) => {
+  const planOrder = { free: 0, plus: 1, pro: 2, premium: 3 };
+  const requiredLabels = {
+    plus: { name: 'Plus', color: '#f59e0b', gradient: 'linear-gradient(135deg,#f59e0b,#fbbf24)', features: ['Browse all startups', 'Explore investors', 'Basic search & filters'] },
+    pro: { name: 'Pro', color: '#6366f1', gradient: 'linear-gradient(135deg,#6366f1,#8b5cf6)', features: ['AI-powered matching', 'Smart scoring', 'Deep alignment insights', 'Priority access'] },
+  };
+  const req = requiredLabels[requiredPlan] || requiredLabels.plus;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      style={{
+        position: 'absolute', inset: 0, zIndex: 20,
+        borderRadius: 32,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+        background: 'rgba(10,10,20,0.55)',
+      }}
+    >
+      <motion.div
+        initial={{ scale: 0.88, opacity: 0, y: 30 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 220, damping: 22 }}
+        style={{
+          background: 'var(--bg-card)', border: '1px solid var(--border)',
+          borderRadius: 28, padding: '3rem 2.5rem', maxWidth: 480, width: '90%',
+          textAlign: 'center', boxShadow: '0 40px 80px rgba(0,0,0,0.3)',
+          position: 'relative', overflow: 'hidden',
+        }}
+      >
+        {/* Top accent bar */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: req.gradient }} />
+
+        {/* Animated lock icon */}
+        <motion.div
+          animate={{ y: [0, -6, 0] }}
+          transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+          style={{
+            width: 80, height: 80, borderRadius: 24,
+            background: `rgba(99,102,241,0.1)`, border: '1px solid rgba(99,102,241,0.2)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 1.75rem',
+          }}
+        >
+          <Lock size={36} color="#6366f1" />
+        </motion.div>
+
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.9rem', borderRadius: 20, background: `${req.color}15`, border: `1px solid ${req.color}30`, color: req.color, fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.05em', marginBottom: '1.25rem' }}>
+          <Crown size={12} /> {req.name.toUpperCase()} PLAN REQUIRED
+        </div>
+
+        <h2 style={{ fontSize: '1.75rem', fontWeight: 900, letterSpacing: '-0.03em', marginBottom: '0.75rem' }}>
+          Unlock <span style={{ background: req.gradient, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{feature}</span>
+        </h2>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.65, marginBottom: '2rem', maxWidth: 380, margin: '0 auto 2rem' }}>
+          Upgrade to <b style={{ color: 'var(--text-primary)' }}>{req.name}</b> or higher to access this feature and supercharge your startup journey.
+        </p>
+
+        {/* Feature list */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', marginBottom: '2rem', textAlign: 'left' }}>
+          {req.features.map((f, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', padding: '0.5rem 0.875rem', background: 'var(--bg-secondary)', borderRadius: 10 }}>
+              <div style={{ width: 20, height: 20, borderRadius: '50%', background: req.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Check size={11} color="white" />
+              </div>
+              <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>{f}</span>
+            </div>
+          ))}
+        </div>
+
+        <Link to="/pricing" style={{ textDecoration: 'none', display: 'block' }}>
+          <motion.button
+            whileHover={{ scale: 1.03, boxShadow: '0 16px 40px rgba(99,102,241,0.4)' }}
+            whileTap={{ scale: 0.97 }}
+            style={{
+              width: '100%', padding: '0.9rem 2rem', borderRadius: 16, border: 'none',
+              background: req.gradient, color: '#fff', fontWeight: 800, fontSize: '1rem',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem',
+              boxShadow: '0 8px 24px rgba(99,102,241,0.3)',
+            }}
+          >
+            <TrendingUp size={18} /> Upgrade to {req.name}
+          </motion.button>
+        </Link>
+
+        <Link to="/pricing" style={{ display: 'block', marginTop: '0.875rem', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600, textDecoration: 'none' }}>
+          View all plans & pricing →
+        </Link>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 const Explore = () => {
   const { user: me, fetchMe } = useAuthStore();
   const [loading, setLoading] = useState(true);
+
+  // ── Plan gating helpers ──────────────────────────────────────────────────
+  const userPlan = me?.subscriptionPlan || 'free';
+  const planOrder = { free: 0, plus: 1, pro: 2, premium: 3 };
+  const hasAccess = (required) => (planOrder[userPlan] ?? 0) >= (planOrder[required] ?? 0);
+  // free: nothing unlocked, plus: startups+investors, pro/premium: everything
+  const canBrowseStartupsInvestors = hasAccess('plus');
+  const canUseAiMatch = hasAccess('pro');
   const [connectingId, setConnectingId] = useState(null);
   const [people, setPeople] = useState([]);
   const [startups, setStartups] = useState([]);
@@ -156,12 +259,10 @@ const Explore = () => {
   const tabs = [
     { 
       id: 'ai-match', 
-      label: (
-        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-          AI Match 
-        </span>
-      ), 
-      icon: <Sparkles size={16} /> 
+      label: 'AI Match', 
+      icon: <Sparkles size={16} />,
+      locked: !canUseAiMatch,
+      requiredPlan: 'pro',
     },
     { id: 'startups', label: 'Startups', icon: <span style={{ fontSize: '1rem' }}>🚀</span> },
     { id: 'investors', label: 'Investors', icon: <span style={{ fontSize: '1rem' }}>👥</span> },
@@ -313,6 +414,9 @@ const Explore = () => {
                   />
                 )}
                 {t.icon} {t.label}
+                {t.locked && (
+                  <span style={{ marginLeft: '0.25rem', opacity: 0.7 }}><Lock size={12} /></span>
+                )}
               </button>
             ))}
           </div>
@@ -341,6 +445,8 @@ const Explore = () => {
         </div>
       </motion.div>
 
+
+
       {/* Content */}
       <AnimatePresence mode="wait">
         {loading || matchingLoading ? (
@@ -349,7 +455,7 @@ const Explore = () => {
             {[...Array(tab === 'ai-match' ? 3 : 6)].map((_, i) => <div key={i} className="skeleton" style={{ height: tab === 'ai-match' ? 220 : 380, borderRadius: 24 }} />)}
           </motion.div>
         ) : (
-          <motion.div key={tab + category} variants={stagger} initial="initial" animate="animate" exit="exit">
+          <motion.div key={tab + category} variants={stagger} initial="initial" animate="animate" exit="exit" style={{ position: 'relative' }}>
             <svg style={{ width: 0, height: 0, position: 'absolute' }} aria-hidden="true" focusable="false">
               <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#6366f1" />
@@ -359,49 +465,9 @@ const Explore = () => {
 
             {/* AI MATCH LAYOUT */}
             {tab === 'ai-match' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                {false ? (
-                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                    style={{ 
-                      padding: '5rem 2rem', 
-                      textAlign: 'center', 
-                      background: 'var(--bg-card)', 
-                      borderRadius: '32px', 
-                      border: '1px solid var(--border)',
-                      position: 'relative',
-                      overflow: 'hidden'
-                    }}
-                  >
-                    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, #6366f1, #a855f7)' }} />
-                    <div style={{ 
-                      width: '80px', height: '80px', borderRadius: '24px', 
-                      background: 'rgba(99,102,241,0.1)', color: '#6366f1', 
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                      margin: '0 auto 2rem', border: '1px solid rgba(99,102,241,0.2)' 
-                    }}>
-                      <Sparkles size={40} />
-                    </div>
-                    <h2 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: '1rem', letterSpacing: '-0.02em' }}>
-                      Unlock AI-Powered <span style={{ color: '#6366f1' }}>Matching</span>
-                    </h2>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', maxWidth: '500px', margin: '0 auto 2.5rem', lineHeight: 1.6 }}>
-                      Get matched with high-potential {me?.role === 'founder' ? 'investors' : 'startups'} based on your unique profile, industry focus, and growth stage.
-                    </p>
-                    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                      <Link to="/pricing" style={{ textDecoration: 'none' }}>
-                        <button className="btn-sleek primary" style={{ padding: '0 2.5rem', height: '52px' }}>Upgrade to Pro</button>
-                      </Link>
-                    </div>
-                    <div style={{ marginTop: '3rem', display: 'flex', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap' }}>
-                      {['Smart Scoring', 'Deep Alignment', 'Priority Access'].map(feature => (
-                        <div key={feature} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: 700 }}>
-                          <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#6366f1' }} /> {feature}
-                        </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                ) : (
-                  <>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', minHeight: !canUseAiMatch ? 680 : 'auto' }}>
+                {!canUseAiMatch && <PlanGate feature="AI Match" requiredPlan="pro" me={me} />}
+
                     {matches.length > 0 && matches.map((match) => {
                   const r = 44, c = 2 * Math.PI * r;
                   const pct = match.matchScore / 100;
@@ -432,7 +498,7 @@ const Explore = () => {
                         </div>
                         
                         <div style={{ textAlign: 'center' }}>
-                          <img src={match.avatar ? `http://localhost:5000${match.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(match.name)}&background=6366f1&color=fff&size=80`}
+                          <img src={match.avatar ? `http://localhost:1110${match.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(match.name)}&background=6366f1&color=fff&size=80`}
                             style={{ width: 72, height: 72, borderRadius: '50%', objectFit: 'cover', marginBottom: '0.75rem', border: '3px solid var(--bg-card)', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }} alt="" />
                           <h3 style={{ fontWeight: 900, fontSize: '1.2rem', marginBottom: '0.2rem' }}>{match.name}</h3>
                           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
@@ -503,14 +569,12 @@ const Explore = () => {
                     {!matchingLoading && matches.length === 0 && (
                       <EmptyState text={me?.role === 'founder' ? "No investors found for your startup profile yet." : "No startups found that match your investment criteria yet."} />
                     )}
-                  </>
-                )}
               </div>
             )}
 
             {/* INVESTORS / FOUNDERS LAYOUT */}
             {tab === 'investors' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: '1.5rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: '1.5rem', position: 'relative' }}>
                 {people.map((p) => {
                   const status = getConnectionStatus(p);
                   const isConnected = status === 'connected';
@@ -530,7 +594,7 @@ const Explore = () => {
 
                       <div style={{ padding: '0 1.5rem 1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
                         <div style={{ marginTop: -40, marginBottom: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                          <img src={p.avatar ? `http://localhost:5000${p.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=6366f1&color=fff&size=80`}
+                          <img src={p.avatar ? `http://localhost:1110${p.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=6366f1&color=fff&size=80`}
                             style={{ width: 72, height: 72, borderRadius: '20px', border: '4px solid var(--bg-card)', boxShadow: '0 12px 32px rgba(0,0,0,0.1)', objectFit: 'cover' }} alt="" />
                         </div>
 
@@ -599,10 +663,10 @@ const Explore = () => {
 
             {/* STARTUPS LAYOUT */}
             {tab === 'startups' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(320px,1fr))', gap: '1.5rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(320px,1fr))', gap: '1.5rem', position: 'relative' }}>
                 {startups.map(s => (
                   <motion.div key={s._id} variants={fadeUp} className="modern-card">
-                    <div style={{ height: 160, position: 'relative', background: s.images?.length > 0 ? `url(http://localhost:5000${s.images[0]}) center/cover` : `linear-gradient(135deg, ${activeCategory?.color || '#6366f1'}, #8b5cf6)` }}>
+                    <div style={{ height: 160, position: 'relative', background: s.images?.length > 0 ? `url(http://localhost:1110${s.images[0]}) center/cover` : `linear-gradient(135deg, ${activeCategory?.color || '#6366f1'}, #8b5cf6)` }}>
                       {/* Fallback pattern if no specific cover */}
                       {(!s.images || s.images.length === 0) && <div style={{ position: 'absolute', inset: 0, opacity: 0.2, backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '20px 20px' }} />}
                       
@@ -612,7 +676,7 @@ const Explore = () => {
                       
                       <div style={{ position: 'absolute', bottom: -24, left: 24, padding: 4, background: 'var(--bg-card)', borderRadius: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.15)' }}>
                         {s.logo ? (
-                          <img src={`http://localhost:5000${s.logo}`} style={{ width: 64, height: 64, borderRadius: 12, objectFit: 'cover', display: 'block' }} alt="" />
+                          <img src={`http://localhost:1110${s.logo}`} style={{ width: 64, height: 64, borderRadius: 12, objectFit: 'cover', display: 'block' }} alt="" />
                         ) : (
                           <div style={{ width: 64, height: 64, borderRadius: 12, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 900, fontSize: '1.5rem' }}>{s.title?.[0]}</div>
                         )}

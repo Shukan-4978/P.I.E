@@ -140,6 +140,21 @@ router.get('/my', auth, requireRole('founder'), async (req, res, next) => {
   }
 });
 
+// GET /api/startups/user/:userId — get startups of a specific founder
+router.get('/user/:userId', auth, async (req, res, next) => {
+  try {
+    const isOwner = req.user._id.toString() === req.params.userId;
+    const query = { founder: req.params.userId };
+    if (!isOwner) {
+      query.isApproved = true;
+    }
+    const startups = await Startup.find(query).sort({ createdAt: -1 });
+    res.json(startups);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // GET /api/startups/:id
 router.get('/:id', auth, async (req, res, next) => {
   try {

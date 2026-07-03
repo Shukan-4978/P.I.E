@@ -20,7 +20,7 @@ const Settings = () => {
 
   const avatarInputRef = useRef(null);
   const [avatarFile, setAvatarFile] = useState(null);
-  const [avatarPreview, setAvatarPreview] = useState(user?.avatar ? `http://localhost:5000${user.avatar}` : null);
+  const [avatarPreview, setAvatarPreview] = useState(user?.avatar ? `http://localhost:1110${user.avatar}` : null);
 
   useEffect(() => {
     const tab = searchParams.get('tab');

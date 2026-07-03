@@ -50,7 +50,7 @@ app.use(cors({
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 200,
+  max: process.env.NODE_ENV === 'development' ? 10000 : 200,
   message: { error: 'Too many requests, please try again later.' },
 });
 app.use('/api/', limiter);
@@ -101,7 +101,7 @@ const connectDB = async () => {
   }
 };
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 1110;
 
 connectDB().then(() => {
   server.listen(PORT, () => {

@@ -238,7 +238,9 @@ const MyInvestments = () => {
       {/* List */}
       {investments.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '6rem 2rem', background: 'var(--bg-secondary)', borderRadius: '32px', border: '1px dashed var(--border)' }}>
-          <TrendingUp size={48} color="var(--text-muted)" style={{ marginBottom: '1.5rem', opacity: 0.5 }} />
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+            <TrendingUp size={48} color="var(--text-muted)" style={{ opacity: 0.5 }} />
+          </div>
           <h3 style={{ fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Empty Portfolio</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>List your investments to build trust with founders.</p>
           <button onClick={handleAddNewClick} className="btn-sleek primary" style={{ margin: '0 auto' }}>Start Portfolio</button>

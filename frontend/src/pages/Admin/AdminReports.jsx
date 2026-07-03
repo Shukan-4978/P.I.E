@@ -164,7 +164,7 @@ const AdminReports = () => {
                     <div style={{ background: 'var(--bg-secondary)', padding: '1rem', borderRadius: '16px', border: '1px solid var(--border)' }}>
                       {r.type === 'user' && r.reportedUser && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                          <img src={r.reportedUser.avatar ? `http://localhost:5000${r.reportedUser.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(r.reportedUser.name)}`} style={{ width: '40px', height: '40px', borderRadius: '50%' }} alt="" />
+                          <img src={r.reportedUser.avatar ? `http://localhost:1110${r.reportedUser.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(r.reportedUser.name)}`} style={{ width: '40px', height: '40px', borderRadius: '50%' }} alt="" />
                           <div>
                             <div style={{ fontWeight: 800 }}>{r.reportedUser.name}</div>
                             <Link to={`/profile/${r.reportedUser._id}`} style={{ fontSize: '0.75rem', color: '#6366f1', textDecoration: 'none', fontWeight: 700 }}>View Profile <ArrowRight size={12} /></Link>

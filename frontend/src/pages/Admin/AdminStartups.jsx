@@ -150,7 +150,7 @@ const AdminStartups = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                   {s.logo ? (
-                    <img src={`http://localhost:5000${s.logo}`} alt="" style={{ width: '64px', height: '64px', borderRadius: '18px', objectFit: 'cover', border: '1px solid var(--border)', padding: '4px', background: 'var(--bg-primary)' }} />
+                    <img src={`http://localhost:1110${s.logo}`} alt="" style={{ width: '64px', height: '64px', borderRadius: '18px', objectFit: 'cover', border: '1px solid var(--border)', padding: '4px', background: 'var(--bg-primary)' }} />
                   ) : (
                     <div style={{ width: '64px', height: '64px', borderRadius: '18px', background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '1.5rem' }}>
                       {s.title[0]}
@@ -214,7 +214,7 @@ const AdminStartups = () => {
               <div style={{ marginTop: 'auto', paddingTop: '1.25rem', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
                 {s.verificationDocument ? (
                   <a 
-                    href={`http://localhost:5000${s.verificationDocument}`} 
+                    href={`http://localhost:1110${s.verificationDocument}`} 
                     target="_blank" 
                     rel="noreferrer" 
                     style={{ 

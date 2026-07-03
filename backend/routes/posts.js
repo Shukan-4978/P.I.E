@@ -81,7 +81,7 @@ router.get('/feed', auth, async (req, res, next) => {
     }
 
     let posts = await Post.find(query)
-      .populate('author', 'name avatar role company followers pastInvestments isVerified')
+      .populate('author', 'name avatar role company followers connectionRequests pastInvestments isVerified')
       .populate('startup', 'title industry stage logo fundingGoal valuation')
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)

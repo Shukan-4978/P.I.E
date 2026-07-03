@@ -143,7 +143,7 @@ const Navbar = () => {
                     <div style={{ fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)', letterSpacing: '0.08em', padding: '0 0.5rem 0.75rem', borderBottom: '1px solid var(--border-subtle)', marginBottom: '0.5rem' }}>PEOPLE</div>
                     {searchResults.users.map((u) => (
                       <div key={u._id} onClick={() => { navigate(`/profile/${u._id}`); setSearchOpen(false); }} className="nav-item" style={{ padding: '0.75rem', borderRadius: '12px', gap: '1rem' }}>
-                        <img src={u.avatar ? `http://localhost:5000${u.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=6366f1&color=fff`} alt="" style={{ width: '40px', height: '40px', borderRadius: '12px', objectFit: 'cover' }} />
+                        <img src={u.avatar ? `http://localhost:1110${u.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=6366f1&color=fff`} alt="" style={{ width: '40px', height: '40px', borderRadius: '12px', objectFit: 'cover' }} />
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)' }}>{u.name}</div>
                           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -162,7 +162,7 @@ const Navbar = () => {
                     {searchResults.startups.map((s) => (
                       <div key={s._id} onClick={() => { navigate(`/startups/${s._id}`); setSearchOpen(false); }} className="nav-item" style={{ padding: '0.75rem', borderRadius: '12px', gap: '1rem' }}>
                         {s.logo ? (
-                          <img src={`http://localhost:5000${s.logo}`} alt="" style={{ width: '40px', height: '40px', borderRadius: '12px', objectFit: 'cover' }} />
+                          <img src={`http://localhost:1110${s.logo}`} alt="" style={{ width: '40px', height: '40px', borderRadius: '12px', objectFit: 'cover' }} />
                         ) : (
                           <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 900, color: 'white' }}>{s.title[0]}</div>
                         )}
@@ -317,7 +317,7 @@ const Navbar = () => {
           >
             <div style={{ position: 'relative' }}>
               <img
-                src={user?.avatar ? `http://localhost:5000${user.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=6366f1&color=fff`}
+                src={user?.avatar ? `http://localhost:1110${user.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=6366f1&color=fff`}
                 alt="" style={{ width: '38px', height: '38px', borderRadius: '12px', objectFit: 'cover' }}
               />
               <div style={{ position: 'absolute', bottom: '-2px', right: '-2px', width: '12px', height: '12px', borderRadius: '50%', background: '#10b981', border: '2px solid var(--bg-card)' }} />
@@ -333,7 +333,7 @@ const Navbar = () => {
                 style={{ position: 'absolute', top: 'calc(100% + 14px)', right: 0, width: '280px', zIndex: 1100, padding: '1rem', boxShadow: '0 24px 60px rgba(0,0,0,0.15)', border: '1px solid var(--border)', borderRadius: '24px' }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem', marginBottom: '1rem' }}>
-                  <img src={user?.avatar ? `http://localhost:5000${user.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=6366f1&color=fff`} alt="" style={{ width: '44px', height: '44px', borderRadius: '14px', objectFit: 'cover' }} />
+                  <img src={user?.avatar ? `http://localhost:1110${user.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=6366f1&color=fff`} alt="" style={{ width: '44px', height: '44px', borderRadius: '14px', objectFit: 'cover' }} />
                   <div style={{ minWidth: 0 }}>
                     <div style={{ fontWeight: 900, fontSize: '1rem', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.name}</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
