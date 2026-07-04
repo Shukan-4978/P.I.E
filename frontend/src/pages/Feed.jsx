@@ -81,7 +81,7 @@ const Feed = ({ isComponent = false }) => {
   };
 
   const avatarUrl = user?.avatar
-    ? `http://localhost:1110${user.avatar}`
+    ? `${user.avatar}`
     : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=6366f1&color=fff&size=40`;
 
   if (loading) return (

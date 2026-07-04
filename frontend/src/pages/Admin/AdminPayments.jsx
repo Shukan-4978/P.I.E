@@ -242,7 +242,7 @@ const AdminPayments = () => {
                       <td style={{ padding: '1.25rem 1.5rem' }}>
                         {t.type === 'subscription' ? (
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                            <img src={t.user?.avatar ? `http://localhost:1110${t.user.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(t.user?.name || 'U')}`} style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1px solid var(--border)' }} alt="" />
+                            <img src={t.user?.avatar ? `${t.user.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(t.user?.name || 'U')}`} style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1px solid var(--border)' }} alt="" />
                             <div>
                               <div style={{ fontWeight: 800, fontSize: '0.85rem' }}>{t.user?.name}</div>
                               <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'capitalize' }}>{t.user?.role} Account</div>

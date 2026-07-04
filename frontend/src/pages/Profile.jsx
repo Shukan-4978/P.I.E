@@ -32,7 +32,7 @@ const UserListModal = ({ title, users, onClose, onRemoveFollower, onUnfollow, is
               return (
                 <div key={u._id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', borderRadius: '12px', transition: 'background 0.2s' }} className="nav-item">
                   <Link to={`/profile/${u._id}`} onClick={onClose} style={{ textDecoration: 'none', color: 'inherit', flex: 1, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <img src={u.avatar ? `http://localhost:1110${u.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name || 'U')}&background=6366f1&color=fff&size=40`} style={{ width: '40px', height: '40px', borderRadius: '50%' }} alt="" />
+                    <img src={u.avatar ? `${u.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name || 'U')}&background=6366f1&color=fff&size=40`} style={{ width: '40px', height: '40px', borderRadius: '50%' }} alt="" />
                     <div>
                       <div style={{ fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                         {u.name || 'Unknown User'}
@@ -586,7 +586,7 @@ const Profile = () => {
         <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
           <div style={{ position: 'relative', marginTop: '-60px' }}>
             <img 
-              src={editForm.avatarPreview || (profile?.avatar ? `http://localhost:1110${profile.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.name||'U')}&background=6366f1&color=fff&size=120`)} 
+              src={editForm.avatarPreview || (profile?.avatar ? `${profile.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.name||'U')}&background=6366f1&color=fff&size=120`)} 
               style={{ width: '130px', height: '130px', borderRadius: '50%', objectFit: 'cover', border: '6px solid var(--bg-card)', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', cursor: editing ? 'pointer' : 'default', background: 'var(--bg-card)' }} 
               alt="" 
               onClick={() => editing && document.getElementById('avatarInput').click()}
@@ -753,7 +753,7 @@ const Profile = () => {
 
               return (
                 <div key={r._id} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem 1.25rem', borderRadius: '16px', border: '1px solid var(--border)', background: 'var(--bg-card)', transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: '0 2px 12px rgba(0,0,0,0.03)' }}>
-                  <img src={r.from?.avatar ? `http://localhost:1110${r.from.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(r.from?.name || 'U')}&background=6366f1&color=fff&size=50`} style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(99,102,241,0.1)' }} alt="" />
+                  <img src={r.from?.avatar ? `${r.from.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(r.from?.name || 'U')}&background=6366f1&color=fff&size=50`} style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(99,102,241,0.1)' }} alt="" />
                   
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <Link to={`/profile/${r.from?._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -830,7 +830,7 @@ const Profile = () => {
               <Link key={s._id} to={`/startups/${s._id}`} style={{ textDecoration: 'none' }}>
                 <div className="card nav-item" style={{ padding: '1.5rem', display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
                   {s.logo ? (
-                    <img src={`http://localhost:1110${s.logo}`} alt={`${s.title} logo`} style={{ width: '56px', height: '56px', borderRadius: '16px', objectFit: 'cover', flexShrink: 0, border: '1px solid var(--border)' }} />
+                    <img src={`${s.logo}`} alt={`${s.title} logo`} style={{ width: '56px', height: '56px', borderRadius: '16px', objectFit: 'cover', flexShrink: 0, border: '1px solid var(--border)' }} />
                   ) : (
                     <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '1.5rem', fontWeight: 900, flexShrink: 0 }}>{s.title[0]}</div>
                   )}
@@ -937,7 +937,7 @@ const Profile = () => {
           investorName={profile?.name}
           investorAvatar={
             profile?.avatar
-              ? `http://localhost:1110${profile.avatar}`
+              ? `${profile.avatar}`
               : `https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.name || 'U')}&background=6366f1&color=fff&size=80`
           }
           onClose={() => setSelectedInvestment(null)}

@@ -57,11 +57,11 @@ const PostCard = ({ post, onUpdate, onDelete }) => {
   const typeMeta = TYPE_META[post.type] || TYPE_META.general;
 
   const authorAvatarUrl = post.author?.avatar
-    ? `http://localhost:1110${post.author.avatar}`
+    ? `${post.author.avatar}`
     : `https://ui-avatars.com/api/?name=${encodeURIComponent(post.author?.name || 'U')}&background=6366f1&color=fff&size=40`;
 
   const userAvatarUrl = user?.avatar
-    ? `http://localhost:1110${user.avatar}`
+    ? `${user.avatar}`
     : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=6366f1&color=fff`;
 
   const handleConnect = async (e, userId) => {
@@ -349,7 +349,7 @@ const PostCard = ({ post, onUpdate, onDelete }) => {
           {post.images.slice(0, 4).map((img, i) => (
             <img
               key={i}
-              src={`http://localhost:1110${img}`}
+              src={`${img}`}
               style={{ width: '100%', aspectRatio: post.images.length === 1 ? '16/9' : '1/1', objectFit: 'cover', maxHeight: '420px' }}
               alt=""
             />
@@ -422,7 +422,7 @@ const PostCard = ({ post, onUpdate, onDelete }) => {
               {commentsToShow?.map((c, i) => (
                 <div key={i} style={{ display: 'flex', gap: '0.625rem', alignItems: 'flex-start' }}>
                   <img
-                    src={c.author?.avatar ? `http://localhost:1110${c.author.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.author?.name || 'U')}&background=6366f1&color=fff`}
+                    src={c.author?.avatar ? `${c.author.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.author?.name || 'U')}&background=6366f1&color=fff`}
                     style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
                     alt=""
                   />

@@ -131,7 +131,7 @@ const StartupProfile = () => {
               border: '1px solid var(--border)'
             }}>
               {startup.logo ? (
-                <img src={`http://localhost:1110${startup.logo}`} alt={startup.title} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '20px' }} />
+                <img src={`${startup.logo}`} alt={startup.title} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '20px' }} />
               ) : (
                 <div style={{ width: '100%', height: '100%', borderRadius: '20px', background: `linear-gradient(135deg, ${indColor}, ${indColor}88)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '2.5rem', fontWeight: 900 }}>
                   {startup.title[0]}
@@ -266,7 +266,7 @@ const StartupProfile = () => {
                       <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.5rem' }}>Gallery</h3>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
                         {startup.images.map((img, i) => (
-                          <img key={i} src={`http://localhost:1110${img}`} style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '16px', border: '1px solid var(--border)' }} alt="" />
+                          <img key={i} src={`${img}`} style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '16px', border: '1px solid var(--border)' }} alt="" />
                         ))}
                       </div>
                     </div>
@@ -383,7 +383,7 @@ const StartupProfile = () => {
           <div className="card" style={{ padding: '1.5rem', borderRadius: '24px' }}>
             <h3 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '1.25rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Founded By</h3>
             <Link to={`/profile/${startup.founder?._id}`} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', background: 'var(--bg-secondary)', borderRadius: '20px', border: '1px solid var(--border)' }}>
-              <img src={startup.founder?.avatar ? `http://localhost:1110${startup.founder.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(startup.founder?.name||'F')}&background=6366f1&color=fff&size=48`} style={{ width: '48px', height: '48px', borderRadius: '14px', objectFit: 'cover' }} alt="" />
+              <img src={startup.founder?.avatar ? `${startup.founder.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(startup.founder?.name||'F')}&background=6366f1&color=fff&size=48`} style={{ width: '48px', height: '48px', borderRadius: '14px', objectFit: 'cover' }} alt="" />
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>{startup.founder?.name}</div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>View Full Profile <ChevronRight size={12} /></div>
@@ -398,7 +398,7 @@ const StartupProfile = () => {
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Pitch Deck</span>
                 {isConnected ? (
                   (startup.verificationDocument || startup.pitchDeckUrl) ? (
-                    <a href={`http://localhost:1110${startup.verificationDocument || startup.pitchDeckUrl}`} target="_blank" rel="noreferrer" className="btn-ghost" style={{ fontSize: '0.85rem', fontWeight: 800, color: '#6366f1', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><FileText size={16} /> View</a>
+                    <a href={`${startup.verificationDocument || startup.pitchDeckUrl}`} target="_blank" rel="noreferrer" className="btn-ghost" style={{ fontSize: '0.85rem', fontWeight: 800, color: '#6366f1', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><FileText size={16} /> View</a>
                   ) : (
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Not Provided</span>
                   )

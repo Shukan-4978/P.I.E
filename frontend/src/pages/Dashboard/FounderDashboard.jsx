@@ -287,7 +287,7 @@ const FounderDashboard = () => {
               <Link key={s._id} to={`/startups/${s._id}`} style={{ textDecoration: 'none' }}>
                 <motion.div whileHover={{ scale: 1.01, backgroundColor: 'rgba(255,255,255,0.05)' }} style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1rem 1.25rem', borderRadius: '16px', background: 'var(--bg-secondary)', border: '1px solid var(--border)', cursor: 'pointer', transition: 'all 0.2s' }}>
                   {s.logo ? (
-                    <img src={`http://localhost:1110${s.logo}`} alt={`${s.title} logo`} style={{ width: '56px', height: '56px', borderRadius: '14px', objectFit: 'cover', flexShrink: 0, border: '2px solid var(--bg-card)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                    <img src={`${s.logo}`} alt={`${s.title} logo`} style={{ width: '56px', height: '56px', borderRadius: '14px', objectFit: 'cover', flexShrink: 0, border: '2px solid var(--bg-card)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
                   ) : (
                     <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '1.4rem', flexShrink: 0, boxShadow: '0 4px 12px rgba(99,102,241,0.3)' }}>{s.title[0]}</div>
                   )}

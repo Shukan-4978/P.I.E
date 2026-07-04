@@ -149,7 +149,7 @@ const AdminInvestments = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                     <img 
-                      src={user.avatar ? `http://localhost:1110${user.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=fff&size=48`} 
+                      src={user.avatar ? `${user.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=fff&size=48`} 
                       style={{ width: '48px', height: '48px', borderRadius: '14px', border: '2px solid var(--border)' }} 
                       alt="" 
                     />
@@ -194,7 +194,7 @@ const AdminInvestments = () => {
                 <div style={{ marginTop: 'auto', paddingTop: '1.25rem', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   {inv.proof ? (
                     <a 
-                      href={`http://localhost:1110${inv.proof}`} 
+                      href={`${inv.proof}`} 
                       target="_blank" 
                       rel="noreferrer" 
                       style={{ 

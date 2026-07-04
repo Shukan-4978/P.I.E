@@ -133,9 +133,9 @@ const Landing = () => {
     };
 
     Promise.all([
-      fetch('http://localhost:1110/api/startups/public/stats').then(r => r.json()),
-      fetch('http://localhost:1110/api/startups/public/list').then(r => r.json()),
-      fetch('http://localhost:1110/api/auth/public/investors').then(r => r.json()),
+      fetch('/api/startups/public/stats').then(r => r.json()),
+      fetch('/api/startups/public/list').then(r => r.json()),
+      fetch('/api/auth/public/investors').then(r => r.json()),
     ]).then(([stats, startupsData, investorsData]) => {
       const { startups, investors, raised, matchRate } = stats;
       setLiveStats([
@@ -268,7 +268,7 @@ const Landing = () => {
                   onClick={() => setGateModal({ open:true, type:'startup' })}
                   style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:16, padding:'1.25rem', cursor:'pointer', transition:'all 0.25s' }}>
                   <div style={{ display:'flex', alignItems:'center', gap:'0.75rem', marginBottom:'0.875rem' }}>
-                    {s.logo ? <img src={`http://localhost:1110${s.logo}`} alt={s.title} style={{ width:44, height:44, borderRadius:10, objectFit:'cover', border:'1px solid var(--border)' }} /> : <div style={{ width:44, height:44, borderRadius:10, background:`linear-gradient(135deg,${INDUSTRY_COLORS[s.industry]||'#6366f1'},#8b5cf6)`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}><Building2 size={18} color="white"/></div>}
+                    {s.logo ? <img src={`${s.logo}`} alt={s.title} style={{ width:44, height:44, borderRadius:10, objectFit:'cover', border:'1px solid var(--border)' }} /> : <div style={{ width:44, height:44, borderRadius:10, background:`linear-gradient(135deg,${INDUSTRY_COLORS[s.industry]||'#6366f1'},#8b5cf6)`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}><Building2 size={18} color="white"/></div>}
                     <div style={{ minWidth:0 }}>
                       <div style={{ fontWeight:800, fontSize:'0.92rem', marginBottom:'0.15rem', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{s.title}</div>
                       <div style={{ fontSize:'0.72rem', fontWeight:700, color: INDUSTRY_COLORS[s.industry]||'#6366f1', textTransform:'uppercase', letterSpacing:'0.06em' }}>{s.industry}</div>
@@ -295,7 +295,7 @@ const Landing = () => {
                   onClick={() => setGateModal({ open:true, type:'investor' })}
                   style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:16, padding:'1.25rem', cursor:'pointer', transition:'all 0.25s' }}>
                   <div style={{ display:'flex', alignItems:'center', gap:'0.75rem', marginBottom:'0.875rem' }}>
-                    {inv.avatar ? <img src={`http://localhost:1110${inv.avatar}`} alt={inv.name} style={{ width:44, height:44, borderRadius:'50%', objectFit:'cover', border:'2px solid rgba(139,92,246,0.3)' }} /> : <div style={{ width:44, height:44, borderRadius:'50%', background:'linear-gradient(135deg,#8b5cf6,#6366f1)', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:800, fontSize:'1.1rem', color:'white', flexShrink:0 }}>{inv.name?.[0]?.toUpperCase()||'I'}</div>}
+                    {inv.avatar ? <img src={`${inv.avatar}`} alt={inv.name} style={{ width:44, height:44, borderRadius:'50%', objectFit:'cover', border:'2px solid rgba(139,92,246,0.3)' }} /> : <div style={{ width:44, height:44, borderRadius:'50%', background:'linear-gradient(135deg,#8b5cf6,#6366f1)', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:800, fontSize:'1.1rem', color:'white', flexShrink:0 }}>{inv.name?.[0]?.toUpperCase()||'I'}</div>}
                     <div style={{ minWidth:0 }}>
                       <div style={{ fontWeight:800, fontSize:'0.92rem', display:'flex', alignItems:'center', gap:'0.3rem' }}>
                         {inv.name}

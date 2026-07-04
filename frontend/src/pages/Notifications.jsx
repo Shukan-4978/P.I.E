@@ -275,7 +275,7 @@ const NotificationItem = ({ n, onClick, onDel }) => {
   const navigate = useNavigate();
 
   const senderAvatar = n.sender?.avatar 
-    ? `http://localhost:1110${n.sender.avatar}` 
+    ? `${n.sender.avatar}` 
     : (n.sender?.name ? `https://ui-avatars.com/api/?name=${encodeURIComponent(n.sender.name)}&background=6366f1&color=fff` : null);
 
   const handleToggle = async () => {

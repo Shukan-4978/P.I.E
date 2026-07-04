@@ -152,7 +152,7 @@ const AdminUsers = () => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                           <div style={{ position: 'relative' }}>
                             <img 
-                              src={u.avatar ? `http://localhost:1110${u.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=${roleCfg.color.replace('#','')}&color=fff&size=48`} 
+                              src={u.avatar ? `${u.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=${roleCfg.color.replace('#','')}&color=fff&size=48`} 
                               style={{ width: '48px', height: '48px', borderRadius: '14px', objectFit: 'cover', border: '2px solid var(--border)' }} 
                               alt="" 
                             />

@@ -498,7 +498,7 @@ const Explore = () => {
                         </div>
                         
                         <div style={{ textAlign: 'center' }}>
-                          <img src={match.avatar ? `http://localhost:1110${match.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(match.name)}&background=6366f1&color=fff&size=80`}
+                          <img src={match.avatar ? `${match.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(match.name)}&background=6366f1&color=fff&size=80`}
                             style={{ width: 72, height: 72, borderRadius: '50%', objectFit: 'cover', marginBottom: '0.75rem', border: '3px solid var(--bg-card)', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }} alt="" />
                           <h3 style={{ fontWeight: 900, fontSize: '1.2rem', marginBottom: '0.2rem' }}>{match.name}</h3>
                           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
@@ -594,7 +594,7 @@ const Explore = () => {
 
                       <div style={{ padding: '0 1.5rem 1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
                         <div style={{ marginTop: -40, marginBottom: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                          <img src={p.avatar ? `http://localhost:1110${p.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=6366f1&color=fff&size=80`}
+                          <img src={p.avatar ? `${p.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=6366f1&color=fff&size=80`}
                             style={{ width: 72, height: 72, borderRadius: '20px', border: '4px solid var(--bg-card)', boxShadow: '0 12px 32px rgba(0,0,0,0.1)', objectFit: 'cover' }} alt="" />
                         </div>
 
@@ -666,7 +666,7 @@ const Explore = () => {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(320px,1fr))', gap: '1.5rem', position: 'relative' }}>
                 {startups.map(s => (
                   <motion.div key={s._id} variants={fadeUp} className="modern-card">
-                    <div style={{ height: 160, position: 'relative', background: s.images?.length > 0 ? `url(http://localhost:1110${s.images[0]}) center/cover` : `linear-gradient(135deg, ${activeCategory?.color || '#6366f1'}, #8b5cf6)` }}>
+                    <div style={{ height: 160, position: 'relative', background: s.images?.length > 0 ? `url(${s.images[0]}) center/cover` : `linear-gradient(135deg, ${activeCategory?.color || '#6366f1'}, #8b5cf6)` }}>
                       {/* Fallback pattern if no specific cover */}
                       {(!s.images || s.images.length === 0) && <div style={{ position: 'absolute', inset: 0, opacity: 0.2, backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '20px 20px' }} />}
                       
@@ -676,7 +676,7 @@ const Explore = () => {
                       
                       <div style={{ position: 'absolute', bottom: -24, left: 24, padding: 4, background: 'var(--bg-card)', borderRadius: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.15)' }}>
                         {s.logo ? (
-                          <img src={`http://localhost:1110${s.logo}`} style={{ width: 64, height: 64, borderRadius: 12, objectFit: 'cover', display: 'block' }} alt="" />
+                          <img src={`${s.logo}`} style={{ width: 64, height: 64, borderRadius: 12, objectFit: 'cover', display: 'block' }} alt="" />
                         ) : (
                           <div style={{ width: 64, height: 64, borderRadius: 12, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 900, fontSize: '1.5rem' }}>{s.title?.[0]}</div>
                         )}
