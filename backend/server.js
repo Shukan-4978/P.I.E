@@ -75,6 +75,10 @@ app.get('/api/health', (req, res) => {
     env: process.env.NODE_ENV,
   });
 });
+// Test route
+app.get('/', (req, res) => {
+  res.send('P.I.E API is running successfully!');
+});
 
 // API Routes
 app.use('/api/auth', authRoutes);
