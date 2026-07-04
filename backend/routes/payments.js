@@ -9,10 +9,13 @@ const { auth } = require('../middleware/auth');
 const { Message } = require('../models/Message');
 const { createNotification } = require('../services/notificationService');
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+let razorpay;
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+}
 
 const PLANS = {
   plus: { name: 'Plus', priceInr: 51, yearlyPriceInr: 490 },
@@ -25,6 +28,7 @@ router.post('/create-order', auth, async (req, res, next) => {
   try {
     const { plan, yearly } = req.body;
     if (!PLANS[plan]) return res.status(400).json({ error: 'Invalid plan.' });
+    if (!razorpay) return res.status(500).json({ error: 'Payment gateway is not configured on this server.' });
 
     const baseAmount = yearly ? PLANS[plan].yearlyPriceInr : PLANS[plan].priceInr;
     const commission = baseAmount * 0.02;
@@ -56,6 +60,10 @@ router.post('/create-order', auth, async (req, res, next) => {
 router.post('/verify-payment', auth, async (req, res, next) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, plan, yearly, messageId, installmentId } = req.body;
+
+    if (!process.env.RAZORPAY_KEY_SECRET) {
+      return res.status(500).json({ error: 'Payment gateway is not configured on this server.' });
+    }
 
     // Verify signature
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
@@ -232,6 +240,8 @@ router.get('/subscription', auth, async (req, res, next) => {
 router.post('/send-investment-order', auth, async (req, res, next) => {
   try {
     const { messageId, installmentId } = req.body;
+    if (!razorpay) return res.status(500).json({ error: 'Payment gateway is not configured on this server.' });
+    
     const message = await Message.findById(messageId);
     if (!message || message.type !== 'offer') return res.status(404).json({ error: 'Offer not found' });
 
