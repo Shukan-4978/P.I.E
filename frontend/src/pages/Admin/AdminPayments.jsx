@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
+import PieLoader from '../../components/common/PieLoader';
 
 const AdminPayments = () => {
   const [transactions, setTransactions] = useState([]);
@@ -220,7 +221,7 @@ const AdminPayments = () => {
             </thead>
             <tbody>
               {loading ? (
-                [1,2,3,4,5].map(i => <tr key={i}><td colSpan="6" style={{ padding: '1.5rem' }}><div className="skeleton" style={{ height: '50px', borderRadius: '12px' }} /></td></tr>)
+                <tr><td colSpan="6" style={{ padding: '4rem 0' }}><PieLoader /></td></tr>
               ) : filteredTransactions.length === 0 ? (
                 <tr><td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)', fontWeight: 600 }}>No transactions found for this category.</td></tr>
               ) : (

@@ -1,3 +1,4 @@
+import PieLoader from '../../components/common/PieLoader';
 import React, { useState, useEffect } from 'react';
 import { 
   FileText, CheckCircle, XCircle, Clock, Trash2, 
@@ -101,11 +102,7 @@ const AdminReports = () => {
       </div>
 
       {/* Main Content Area */}
-      {loading ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          {[1,2,3].map(i => <div key={i} className="skeleton" style={{ height: '180px', borderRadius: '24px' }} />)}
-        </div>
-      ) : reports.length === 0 ? (
+      {loading ? (<div style={{ display: 'flex', justifyContent: 'center', padding: '4rem 0' }}><PieLoader /></div>) : 'flex', flexDirection.length === 0 ? (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="card" style={{ padding: '6rem 2rem', textAlign: 'center', borderRadius: '32px', border: '1px dashed var(--border)' }}>
           <ShieldAlert size={48} style={{ opacity: 0.1, marginBottom: '1.5rem' }} />
           <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>No {status} reports</h3>

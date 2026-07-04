@@ -10,6 +10,7 @@ import { formatDistanceToNow, format } from 'date-fns';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
+import PieLoader from '../../components/common/PieLoader';
 
 const AdminStartups = () => {
   const [startups, setStartups] = useState([]);
@@ -112,9 +113,7 @@ const AdminStartups = () => {
 
       {/* Main Content Area */}
       {loading ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '1.5rem' }}>
-          {[1,2,3,4].map(i => <div key={i} className="skeleton" style={{ height: '220px', borderRadius: '24px' }} />)}
-        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem 0' }}><PieLoader /></div>
       ) : startups.length === 0 ? (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card" style={{ padding: '6rem 2rem', textAlign: 'center', background: 'var(--bg-card)', borderRadius: '32px', border: '1px dashed var(--border)' }}>
           <div style={{ width: '80px', height: '80px', background: 'var(--bg-secondary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>

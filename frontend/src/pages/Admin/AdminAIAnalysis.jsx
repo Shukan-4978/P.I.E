@@ -1,3 +1,4 @@
+import PieLoader from '../../components/common/PieLoader';
 import React, { useState, useEffect } from 'react';
 import { 
   Cpu, User, Rocket, FileText, Download, 
@@ -75,11 +76,7 @@ const AdminAIAnalysis = () => {
               </tr>
             </thead>
             <tbody>
-              {loading ? (
-                [1,2,3,4,5].map(i => (
-                  <tr key={i}><td colSpan="7" style={{ padding: '1rem' }}><div className="skeleton" style={{ height: '40px', borderRadius: '8px' }} /></td></tr>
-                ))
-              ) : analyses.length === 0 ? (
+              {loading ? (<tr><td colSpan="8" style={{ padding: '4rem 0' }}><PieLoader /></td></tr>) : analyses.length === 0 ? (
                 <tr><td colSpan="7" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>No AI analyses found.</td></tr>
               ) : analyses.map((a) => (
                 <tr key={a._id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'var(--bg-secondary)'} onMouseOut={e => e.currentTarget.style.background = 'none'}>

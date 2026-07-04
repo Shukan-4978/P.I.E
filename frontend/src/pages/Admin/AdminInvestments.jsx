@@ -1,3 +1,4 @@
+import PieLoader from '../../components/common/PieLoader';
 import React, { useState, useEffect } from 'react';
 import { 
   TrendingUp, CheckCircle, XCircle, Clock, FileText, 
@@ -109,11 +110,7 @@ const AdminInvestments = () => {
       </div>
 
       {/* Main Content Area */}
-      {loading ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '1.5rem' }}>
-          {[1,2,3,4].map(i => <div key={i} className="skeleton" style={{ height: '260px', borderRadius: '24px' }} />)}
-        </div>
-      ) : investments.length === 0 ? (
+      {loading ? (<div style={{ display: 'flex', justifyContent: 'center', padding: '4rem 0' }}><PieLoader /></div>) : 'grid', gridTemplateColumns.length === 0 ? (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="card" style={{ padding: '6rem 2rem', textAlign: 'center', borderRadius: '32px', border: '1px dashed var(--border)' }}>
           <TrendingUp size={48} style={{ opacity: 0.1, marginBottom: '1.5rem' }} />
           <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>No {status} entries</h3>

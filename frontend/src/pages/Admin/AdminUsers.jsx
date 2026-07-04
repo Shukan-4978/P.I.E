@@ -1,3 +1,4 @@
+import PieLoader from '../../components/common/PieLoader';
 import React, { useState, useEffect } from 'react';
 import { 
   Search, Shield, Trash2, Users, Ban, TrendingUp, 
@@ -136,11 +137,7 @@ const AdminUsers = () => {
               </tr>
             </thead>
             <tbody>
-              {loading ? (
-                [1,2,3,4,5].map(i => (
-                  <tr key={i}><td colSpan="5" style={{ padding: '1.5rem' }}><div className="skeleton" style={{ height: '50px', borderRadius: '12px' }} /></td></tr>
-                ))
-              ) : (
+              {loading ? (<tr><td colSpan="8" style={{ padding: '4rem 0' }}><PieLoader /></td></tr>) : (
                 users.map(u => {
                   const roleCfg = ROLE_CONFIG[u.role] || { color: '#64748b', bg: '#f1f5f9', label: u.role };
                   const planCfg = PLAN_CONFIG[u.subscriptionPlan || 'free'];
