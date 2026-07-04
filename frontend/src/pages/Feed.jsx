@@ -85,10 +85,7 @@ const Feed = ({ isComponent = false }) => {
     ? `${user.avatar}`
     : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=6366f1&color=fff&size=40`;
 
-  if (loading) return <PieLoader />; } }`}</style>
-    </div>
-  );
-
+  if (loading) return <PieLoader />;
   return (
     <div style={isComponent ? {} : { maxWidth: '720px', margin: '0 auto', paddingBottom: '4rem' }}>
       <style>{`
