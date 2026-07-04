@@ -1,3 +1,4 @@
+import PieLoader from '../components/common/PieLoader';
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
@@ -565,7 +566,7 @@ const Profile = () => {
     toast.success('Profile link copied to clipboard!');
   };
 
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}><div className="loader-spin" /></div>;
+  if (loading) return <PieLoader />;
 
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto' }}>

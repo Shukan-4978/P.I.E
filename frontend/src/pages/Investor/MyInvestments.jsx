@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PieLoader from '../../components/common/PieLoader';
 import { Link } from 'react-router-dom';
 import {
   TrendingUp, Plus, X, Briefcase, DollarSign, Calendar,
@@ -190,9 +191,8 @@ const MyInvestments = () => {
   };
 
   if (loading) return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '6rem', gap: '1rem', flexDirection: 'column' }}>
-      <div style={{ width: '40px', height: '40px', borderRadius: '50%', border: '3px solid rgba(99,102,241,0.2)', borderTopColor: '#6366f1', animation: 'spin 0.8s linear infinite' }} />
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '6rem' }}>
+      <PieLoader />
     </div>
   );
 

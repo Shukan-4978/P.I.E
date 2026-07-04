@@ -78,8 +78,10 @@ router.post(
 
       // Send OTPs asynchronously
       try {
-        await sendEmailOTP(email, emailCode);
-        await sendSMSOTP(phone, phoneCode);
+        // We no longer send automatically on registration based on user request.
+        // User will trigger it manually via 'Verify Now' button.
+        // await sendEmailOTP(email, emailCode);
+        // await sendSMSOTP(phone, phoneCode);
       } catch (err) {
         console.error('Failed to send initial OTPs', err);
         // Continue anyway, user can request again

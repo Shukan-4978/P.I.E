@@ -1,3 +1,4 @@
+import PieLoader from '../components/common/PieLoader';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -42,7 +43,7 @@ const Billing = () => {
   const currentPlan = subscription?.plan || user?.subscriptionPlan || 'free';
   const usage = user?.usageStats || {};
 
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}><div className="loader-spin" /></div>;
+  if (loading) return <PieLoader />;
 
   return (
     <div style={{ maxWidth: '900px', margin: '0 auto' }}>

@@ -1,3 +1,4 @@
+import PieLoader from '../../components/common/PieLoader';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Rocket, ChevronRight, ChevronLeft, Plus, X, Check, Edit, Image as ImageIcon, Upload } from 'lucide-react';
@@ -119,7 +120,7 @@ const EditStartup = () => {
 
   const lbl = (t) => <label style={{fontSize:'0.85rem',fontWeight:600,color:'var(--text-secondary)',display:'block',marginBottom:'0.4rem'}}>{t}</label>;
 
-  if (fetching) return <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}><div className="loader-spin" /></div>;
+  if (fetching) return <PieLoader />;
 
   return (
     <div style={{maxWidth:'640px',margin:'0 auto', paddingBottom: '4rem'}}>

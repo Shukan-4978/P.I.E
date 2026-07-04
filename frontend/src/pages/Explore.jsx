@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import PieLoader from '../components/common/PieLoader';
 import { Link } from 'react-router-dom';
 import { Compass, Search, UserPlus, Clock, Check, Sparkles, Cpu, HeartPulse, Truck, Layout, ShoppingBag, Leaf, Home, GraduationCap, Globe, Zap, ChevronRight, MapPin, BarChart3, Building2, ArrowRight, Lock, Rocket, TrendingUp, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -450,9 +451,8 @@ const Explore = () => {
       {/* Content */}
       <AnimatePresence mode="wait">
         {loading || matchingLoading ? (
-          <motion.div key="skeleton" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            style={{ display: 'grid', gridTemplateColumns: tab === 'ai-match' ? '1fr' : 'repeat(auto-fill,minmax(320px,1fr))', gap: '1.5rem' }}>
-            {[...Array(tab === 'ai-match' ? 3 : 6)].map((_, i) => <div key={i} className="skeleton" style={{ height: tab === 'ai-match' ? 220 : 380, borderRadius: 24 }} />)}
+          <motion.div key="skeleton" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <PieLoader />
           </motion.div>
         ) : (
           <motion.div key={tab + category} variants={stagger} initial="initial" animate="animate" exit="exit" style={{ position: 'relative' }}>

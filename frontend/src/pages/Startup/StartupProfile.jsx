@@ -1,3 +1,4 @@
+import PieLoader from '../../components/common/PieLoader';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
@@ -87,15 +88,7 @@ const StartupProfile = () => {
     }
   };
 
-  if (loading) return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-      <motion.div 
-        animate={{ rotate: 360 }} 
-        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-        style={{ width: '50px', height: '50px', borderRadius: '50%', border: '4px solid var(--border)', borderTopColor: '#6366f1' }}
-      />
-    </div>
-  );
+  if (loading) return <PieLoader />;
   
   if (!startup) return null;
 

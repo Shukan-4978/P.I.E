@@ -1,3 +1,4 @@
+import PieLoader from '../components/common/PieLoader';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -84,11 +85,7 @@ const Feed = ({ isComponent = false }) => {
     ? `${user.avatar}`
     : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=6366f1&color=fff&size=40`;
 
-  if (loading) return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '6rem 2rem', gap: '1rem' }}>
-      <div style={{ width: '44px', height: '44px', borderRadius: '50%', border: '3px solid rgba(99,102,241,0.2)', borderTopColor: '#6366f1', animation: 'spin 0.8s linear infinite' }} />
-      <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem', fontWeight: 600 }}>Loading your feed...</span>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+  if (loading) return <PieLoader />; } }`}</style>
     </div>
   );
 

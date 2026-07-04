@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PieLoader from '../../components/common/PieLoader';
 import { Link } from 'react-router-dom';
 import { 
   Users, Rocket, FileText, TrendingUp, AlertTriangle, Activity, 
@@ -58,15 +59,8 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-        <div className="skeleton" style={{ height: '80px', borderRadius: '24px', width: '300px' }} />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: '1.5rem' }}>
-          {[1,2,3,4].map(i => <div key={i} className="skeleton" style={{ height: '140px', borderRadius: '24px' }} />)}
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
-          <div className="skeleton" style={{ height: '400px', borderRadius: '32px' }} />
-          <div className="skeleton" style={{ height: '400px', borderRadius: '32px' }} />
-        </div>
+      <div style={{ padding: '2rem' }}>
+        <PieLoader />
       </div>
     );
   }
