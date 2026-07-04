@@ -240,7 +240,7 @@ router.put('/profile', auth, uploadAvatar.single('avatar'), async (req, res, nex
     }
 
     if (req.file) {
-      updates.avatar = `/uploads/avatars/${req.file.filename}`;
+      updates.avatar = req.file.path;
     }
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -295,7 +295,7 @@ router.post('/investments', auth, uploadProof.single('proof'), async (req, res, 
       location: req.body.location,
       exitStatus: req.body.exitStatus || 'Active',
       status: 'pending',
-      proof: req.file ? `/uploads/proofs/${req.file.filename}` : ''
+      proof: req.file ? req.file.path : ''
     };
 
     user.pastInvestments.push(newInvestment);
@@ -338,7 +338,7 @@ router.put('/investments/:id', auth, uploadProof.single('proof'), async (req, re
     });
 
     if (req.file) {
-      investment.proof = `/uploads/proofs/${req.file.filename}`;
+      investment.proof = req.file.path;
       changed = true;
     }
 

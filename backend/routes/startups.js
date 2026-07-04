@@ -14,17 +14,17 @@ router.post('/', auth, requireRole('founder'), checkLimit('startups'), uploadSta
     
     // Handle images
     if (req.files && req.files['images']) {
-      data.images = req.files['images'].map((f) => `/uploads/images/${f.filename}`);
+      data.images = req.files['images'].map((f) => f.path);
     }
     
     // Handle logo
     if (req.files && req.files['logo']) {
-      data.logo = `/uploads/images/${req.files['logo'][0].filename}`;
+      data.logo = req.files['logo'][0].path;
     }
     
     // Handle verification document
     if (req.files && req.files['verificationDocument']) {
-      data.verificationDocument = `/uploads/pitchdecks/${req.files['verificationDocument'][0].filename}`;
+      data.verificationDocument = req.files['verificationDocument'][0].path;
     }
 
     if (data.teamMembers) data.teamMembers = JSON.parse(data.teamMembers);
@@ -198,10 +198,10 @@ router.put('/:id', auth, requireRole('founder'), uploadStartupFiles.fields([{ na
     const updates = { ...req.body };
     
     if (req.files && req.files['images']) {
-      updates.images = req.files['images'].map((f) => `/uploads/images/${f.filename}`);
+      updates.images = req.files['images'].map((f) => f.path);
     }
     if (req.files && req.files['logo']) {
-      updates.logo = `/uploads/images/${req.files['logo'][0].filename}`;
+      updates.logo = req.files['logo'][0].path;
     }
     
     if (updates.teamMembers) updates.teamMembers = JSON.parse(updates.teamMembers);

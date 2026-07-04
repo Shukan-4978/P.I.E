@@ -12,7 +12,7 @@ const { checkLimit } = require('../middleware/limitMiddleware');
 router.post('/', auth, checkLimit('posts'), uploadImage.array('images', 4), async (req, res, next) => {
   try {
     const { content, startup, type, tags } = req.body;
-    const images = req.files ? req.files.map((f) => `/uploads/images/${f.filename}`) : [];
+    const images = req.files ? req.files.map((f) => f.path) : [];
 
     const post = await Post.create({
       author: req.user._id,

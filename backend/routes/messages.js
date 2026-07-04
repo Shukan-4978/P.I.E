@@ -112,7 +112,7 @@ const { uploadChatFile } = require('../middleware/upload');
 router.post('/upload', auth, uploadChatFile.single('file'), async (req, res, next) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
-    const url = `/uploads/chat/${req.file.filename}`;
+    const url = req.file.path;
     res.json({ 
       url, 
       name: req.file.originalname, 

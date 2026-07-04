@@ -1,119 +1,87 @@
 const multer = require('multer');
 const path = require('path');
-const { v4: uuidv4 } = require('uuid');
-const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+require('dotenv').config();
 
-// Ensure upload directories exist
-const ensureDir = (dir) => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-};
-
-ensureDir('uploads/images');
-ensureDir('uploads/pitchdecks');
-ensureDir('uploads/avatars');
-ensureDir('uploads/chat');
-ensureDir('uploads/proofs');
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // Storage for images (posts, startup media)
-const imageStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/images');
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `${uuidv4()}${ext}`);
+const imageStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'pie-images',
+    allowed_formats: ['jpeg', 'jpg', 'png', 'gif', 'webp', 'heic', 'heif'],
+    resource_type: 'image',
   },
 });
 
-// Storage for pitch decks
-const pitchDeckStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/pitchdecks');
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `${uuidv4()}${ext}`);
+// Storage for pitch decks (PDFs, PPTs)
+const pitchDeckStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'pie-pitchdecks',
+    format: async (req, file) => {
+      // Return extension without dot
+      return path.extname(file.originalname).substring(1).toLowerCase();
+    },
+    resource_type: 'raw',
   },
 });
 
 // Storage for avatars
-const avatarStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/avatars');
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `${uuidv4()}${ext}`);
+const avatarStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'pie-avatars',
+    allowed_formats: ['jpeg', 'jpg', 'png', 'gif', 'webp'],
+    resource_type: 'image',
   },
 });
 
 // Storage for investment proofs
-const proofStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/proofs');
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `${uuidv4()}${ext}`);
+const proofStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'pie-proofs',
+    format: async (req, file) => {
+      return path.extname(file.originalname).substring(1).toLowerCase();
+    },
+    resource_type: 'auto', // allows image and raw
   },
 });
 
-// Generic image filter
+// Generic filters (Cloudinary handles most validation, but we can keep basic checks)
 const imageFilter = (req, file, cb) => {
-  const allowedExts = /jpeg|jpg|png|gif|webp|heic|heif/;
-  const isImageMime = file.mimetype.startsWith('image/') || file.mimetype === 'application/octet-stream';
-  const isValidExt = allowedExts.test(path.extname(file.originalname).toLowerCase());
-  
-  if (isValidExt && (isImageMime || file.mimetype === 'application/octet-stream')) {
-    cb(null, true);
-  } else if (isImageMime && !isValidExt) {
-    // Some images might not have extensions but have correct mime
+  if (file.mimetype.startsWith('image/') || file.mimetype === 'application/octet-stream') {
     cb(null, true);
   } else {
-    cb(new Error('Only image files are allowed (jpeg, jpg, png, gif, webp, heic)'));
+    cb(new Error('Only image files are allowed'));
   }
 };
 
-// Generic pitch deck/document filter
 const pitchDeckFilter = (req, file, cb) => {
   const allowedExts = /pdf|ppt|pptx/;
-  const isPDF = file.mimetype === 'application/pdf';
-  const isPPT = file.mimetype === 'application/vnd.ms-powerpoint' || file.mimetype === 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
-  const isValidExt = allowedExts.test(path.extname(file.originalname).toLowerCase());
-  
-  if (isPDF || isPPT || isValidExt) {
+  const isDocMime = file.mimetype === 'application/pdf' || 
+                    file.mimetype.includes('powerpoint') || 
+                    file.mimetype.includes('presentationml');
+  if (isDocMime || allowedExts.test(path.extname(file.originalname).toLowerCase())) {
     cb(null, true);
   } else {
-    cb(new Error('Only PDF and PowerPoint files are allowed for documents'));
+    cb(new Error('Only PDF and PowerPoint files are allowed'));
   }
 };
 
-// Combined startup files filter
 const startupFilesFilter = (req, file, cb) => {
-  const field = file.fieldname;
-  const ext = path.extname(file.originalname).toLowerCase();
-  
-  if (field === 'images' || field === 'logo') {
-    const allowedExts = /jpeg|jpg|png|gif|webp|heic|heif/;
-    if (allowedExts.test(ext) || file.mimetype.startsWith('image/') || file.mimetype === 'application/octet-stream' && allowedExts.test(ext)) {
-      cb(null, true);
-    } else {
-      cb(new Error(`Invalid file type for ${field} (${ext}, ${file.mimetype}). Only images are allowed.`));
-    }
-  } else if (field === 'verificationDocument' || field === 'pitchDeck') {
-    const allowedExts = /pdf|ppt|pptx/;
-    const isDocMime = file.mimetype === 'application/pdf' || 
-                      file.mimetype.includes('powerpoint') || 
-                      file.mimetype.includes('presentationml');
-    if (allowedExts.test(ext) || isDocMime) {
-      cb(null, true);
-    } else {
-      cb(new Error(`Invalid file type for ${field} (${ext}, ${file.mimetype}). Only PDF/PPT are allowed.`));
-    }
+  if (file.fieldname === 'images' || file.fieldname === 'logo') {
+    imageFilter(req, file, cb);
   } else {
-    cb(null, true); // Allow other fields or handle as needed
+    pitchDeckFilter(req, file, cb);
   }
 };
 
@@ -139,40 +107,49 @@ const uploadAvatar = multer({
 const uploadProof = multer({
   storage: proofStorage,
   limits: { fileSize: 15 * 1024 * 1024 }, // 15MB
-  fileFilter: (req, file, cb) => {
-    const allowedExts = /jpeg|jpg|png|pdf/;
-    const isValidExt = allowedExts.test(path.extname(file.originalname).toLowerCase());
-    if (isValidExt) cb(null, true);
-    else cb(new Error('Only images (jpg/png) and PDFs are allowed for proofs.'));
-  }
+});
+
+// For multiple startup files, CloudinaryStorage requires a dynamic folder/resource_type based on the field
+const startupFilesStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    if (file.fieldname === 'images' || file.fieldname === 'logo') {
+      return {
+        folder: 'pie-images',
+        allowed_formats: ['jpeg', 'jpg', 'png', 'gif', 'webp'],
+        resource_type: 'image',
+      };
+    } else {
+      return {
+        folder: 'pie-pitchdecks',
+        format: path.extname(file.originalname).substring(1).toLowerCase(),
+        resource_type: 'raw',
+      };
+    }
+  },
 });
 
 const uploadStartupFiles = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      if (file.fieldname === 'images' || file.fieldname === 'logo') cb(null, 'uploads/images');
-      else cb(null, 'uploads/pitchdecks');
-    },
-    filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname);
-      cb(null, `${uuidv4()}${ext}`);
-    },
-  }),
+  storage: startupFilesStorage,
   limits: { fileSize: 20 * 1024 * 1024 },
   fileFilter: startupFilesFilter,
 });
 
 // Chat attachments
+const chatFileStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    const isImage = file.mimetype.startsWith('image/');
+    return {
+      folder: 'pie-chat',
+      format: path.extname(file.originalname).substring(1).toLowerCase(),
+      resource_type: isImage ? 'image' : 'raw',
+    };
+  },
+});
+
 const uploadChatFile = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'uploads/chat');
-    },
-    filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname);
-      cb(null, `${uuidv4()}${ext}`);
-    },
-  }),
+  storage: chatFileStorage,
   limits: { fileSize: 15 * 1024 * 1024 }, // 15MB
 });
 

@@ -17,7 +17,7 @@ router.post('/analyze', auth, checkLimit('ai_analysis'), uploadPitchDeck.single(
     if (!req.file) return res.status(400).json({ error: 'Pitch deck file is required.' });
 
     const { startupId } = req.body;
-    const pitchDeckUrl = `/uploads/pitchdecks/${req.file.filename}`;
+    const pitchDeckUrl = req.file.path;
 
     const analysis = await AIAnalysis.create({
       startup: startupId || undefined,
