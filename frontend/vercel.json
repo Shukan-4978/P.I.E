@@ -2,15 +2,15 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://<YOUR_BACKEND_URL>/api/$1"
+      "destination": "https://p-i-e-platform-4-investorandfounder.onrender.com/api/$1"
     },
     {
       "source": "/socket.io/(.*)",
-      "destination": "https://<YOUR_BACKEND_URL>/socket.io/$1"
+      "destination": "https://p-i-e-platform-4-investorandfounder.onrender.com/socket.io/$1"
     },
     {
       "source": "/uploads/(.*)",
-      "destination": "https://<YOUR_BACKEND_URL>/uploads/$1"
+      "destination": "https://p-i-e-platform-4-investorandfounder.onrender.com/uploads/$1"
     },
     {
       "source": "/(.*)",
